@@ -1,0 +1,30 @@
+{% extends "practica/layout.html" %}
+
+{% block menu_title %}Inicio de sesión{% endblock %}
+
+{% block left_block %}
+    <div>xdxdxdxdxd</div>
+{% endblock %}
+
+{% block main_block %}
+    <div>
+        <div style="text-align: center;">Inicia sesión</div>
+        <form action="{% url 'login'%}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="usuario">Nombre de usuario</label>
+                <input name="username" required="required" class="form-control form-control-sm" type="text" id="username">
+            </div>
+            <div class="form-group">
+                <label for="password1">Contraseña</label>
+                <input name="password" required="required" type="password" class="form-control form-control-sm" id="password1">
+            </div>
+            <br/>
+            <button type="submit" class="btn btn-outline-primary btn-sm">Iniciar sesión</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block right_block %}
+    <div>Consejo: </div>
+{% endblock %}

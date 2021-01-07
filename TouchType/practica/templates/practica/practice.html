@@ -1,0 +1,17 @@
+{% extends "practica/layout.html" %}
+{% block menu_title %}Practica{% endblock %}
+{% block left_block %}
+    {% if user.is_authenticated %}
+        <div>Practicando: </div>
+        <div>Letra c</div>
+    {% endif %}
+{% endblock %}
+
+{% block main_block %}
+    <div style="font-size: 40px;">Hola gente</div>
+{% endblock %}
+
+{% block right_block %}
+    <div>Consejo: </div>
+    <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut.</div>
+{% endblock %}
