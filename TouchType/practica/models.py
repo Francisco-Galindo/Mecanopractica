@@ -9,8 +9,11 @@ class Words_es(models.Model):
     word = models.CharField(max_length=33)
     weight = models.FloatField()
 
-    def serialze(self):
+    def serialize(self):
         return {
             "word": self.word,
             "weight": self.weight
         }
+
+class Ses(models.Model):
+    pass

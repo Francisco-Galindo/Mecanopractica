@@ -1,5 +1,8 @@
 {% extends "practica/layout.html" %}
+{% load static %}
+
 {% block menu_title %}Practica{% endblock %}
+
 {% block left_block %}
     {% if user.is_authenticated %}
         <div>Practicando: </div>
@@ -8,10 +11,15 @@
 {% endblock %}
 
 {% block main_block %}
-    <div style="font-size: 40px;">Hola gente</div>
+    <!--<div style="font-size: 40px;">Hola gente</div>-->
+    <button class="btn btn-sm btn-outline-primary" id="doscientos">200</button>
 {% endblock %}
 
 {% block right_block %}
     <div>Consejo: </div>
     <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut.</div>
+{% endblock %}
+
+{% block script1 %}
+    <script src="{% static 'practica/words.js' %}"></script>
 {% endblock %}
