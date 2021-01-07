@@ -4,6 +4,7 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
+import random
 
 from .models import User, Words_es
 
@@ -70,4 +71,22 @@ def register_view(request):
 # A P I
 
 def words(request, mode):
-    if mode == ""
+    if mode == "200":
+        num = 200
+
+    words = Words_es.objects.order_by("-weight")[:num]
+    weights = []
+    for word in words:
+      weight = getattr(word, "weight")
+      weights.append(weight)
+
+    words_to_send = random.choices(
+        population= words,
+        weights=weights,
+        k= 20
+    )  
+
+    return JsonResponse([word.serialize() for word in words_to_send], safe=False)
+
+
+
