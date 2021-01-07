@@ -70,6 +70,7 @@ def register_view(request):
 
 # A P I
 
+#Entregando las palabras pedidas
 def words(request, mode):
     if mode == "200":
         num = 200
