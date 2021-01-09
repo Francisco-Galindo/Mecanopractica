@@ -15,7 +15,6 @@ def login_view(request):
     #Cuando la forma sea enviada
     if request.method == "POST":
 
-
         username = request.POST["username"]
         password = request.POST["password"]
         #Checar si la contrasena y usuario son validos
@@ -32,7 +31,7 @@ def login_view(request):
             })
     #Si la request no es post, es porque solo se esta cargando la forma, mostrar dicha pagina
     else:
-        return render(request, "practica/login.html")
+           return render(request, "practica/login.html")
 
 def logout_view(request):
     logout(request)
@@ -72,22 +71,22 @@ def register_view(request):
 
 #Entregando las palabras pedidas
 def words(request, mode):
-    if mode == "200":
-        num = 200
 
-    words = Words_es.objects.order_by("-weight")[:num]
+    words = Words_es.objects.order_by("-weight")[:int(mode)]
     weights = []
     for word in words:
       weight = getattr(word, "weight")
       weights.append(weight)
 
     words_to_send = random.choices(
-        population= words,
-        weights=weights,
-        k= 20
+        population = words,
+        weights = weights,
+        k = 50
     )  
 
     return JsonResponse([word.serialize() for word in words_to_send], safe=False)
 
-
-
+def texts(request):
+    #text = random.choice(Texts.objects.all())
+    #return JsonResponse(text.serialize(), safe=False)
+    pass
