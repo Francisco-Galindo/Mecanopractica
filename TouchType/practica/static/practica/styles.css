@@ -15,6 +15,24 @@ body {
     align-items: center;
 }
 
+.incorrect{
+    color: var(--error);
+}
+
+.unwritten{
+    color: var(--background);
+}
+
+.correct {
+    color: var(--text);
+}
+
+#input{
+    background-color: var(--highlight);
+    border-color: var(--highlight);
+    color: var(--highlight);
+}
+
 .grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
