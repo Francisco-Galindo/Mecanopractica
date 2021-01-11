@@ -81,7 +81,7 @@ def words(request, mode):
     words_to_send = random.choices(
         population = words,
         weights = weights,
-        k = 50
+        k = 70
     )  
 
     return JsonResponse([word.serialize() for word in words_to_send], safe=False)
