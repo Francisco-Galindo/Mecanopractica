@@ -22,26 +22,30 @@ function words(words) {
             }
             div.innerHTML += `<span class="unwritten"> </span>`;
         });
-        //document.querySelector('#text').append(div);
     })
     .catch(error => {
         console.log('Error: ', error);
     });
 }
 
+// Función que obtiene la primer letra no escrita entre los spans, ¨n¨ es un offset para obtener algún otro span.
 function getUnwrittenKey(n) {
+
+    // Obteniendo un array de todos los spans que son hijos del div con el texto
     const spans = document.querySelector('#text').children;
     const span_list = Array.from(spans);
+    
     let i = 0;
     while (span_list[i].className != "unwritten")
     {
         i++;
     }
-    let index = i + n;
+    var index;
+    index = i + n;
     if (index < 0) {
-        const index = 0;
+        index = 0;
     }
-    
+
     return span_list[index];
 }
 
@@ -53,19 +57,24 @@ function deleteKey() {
 // La función de escribir debe terminar la prueba cuando el tiempo acabe o (se escriba correctamente la última palabra, o se presione espacio en la última palabra), esto depende del modo en el que este el programa
 function checkKeyPresses(key) {
     // checa solamente la u;tima letra de la forma y comparala con la letra correspondiente en los spans
+    
+    // Línea para evitar que el shift sea detectado de manera incorrecta
     if (key !== "Shift"){
+        // Obtener el span con el cual comparar lo que ha sido tecleado
         const other_key = getUnwrittenKey(0);
-
-    if (key === other_key.innerHTML) {
-        other_key.className = "correct";
-    }
-    else {
-        other_key.className = "incorrect";
-    }
+        // Si coincide el contenido del span con la tecla oprimida, marcar el span como correcto
+        if (key === other_key.innerHTML) {
+            other_key.className = "correct";
+        }
+        else {
+            other_key.className = "incorrect";
+        }
     }
     
 }
 
+// Esta función es llamada cuando se presiona una tecla en el modo de practica
+//Se ocupa de tomar la decision de llamar la función correspondiente dependiendo de si fue presionado el Backspace u otra tecla
 function keyPressed(event) {
     const key = event.key;
     if (key == "Backspace") {
