@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // Botones para pedir cada tipo de palabras
-    document.querySelector('#doscientos').addEventListener('click', () => words('200'));
-    document.querySelector('#mil').addEventListener('click', () => words('1000'));
-    document.querySelector('#diez_mil').addEventListener('click', () => words('10000'));
+    //document.querySelector('#doscientos').addEventListener('click', () => words('200'));
+    //document.querySelector('#mil').addEventListener('click', () => words('1000'));
+    //document.querySelector('#diez_mil').addEventListener('click', () => words('10000'));
+
+    words('1000');
 });
 
 function words(words) {
