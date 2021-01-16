@@ -27,6 +27,10 @@ body {
     color: var(--text);
 }
 
+.hidden_bars {
+    display: none;
+}
+
 #input{
     background-color: var(--highlight);
     border-color: var(--highlight);

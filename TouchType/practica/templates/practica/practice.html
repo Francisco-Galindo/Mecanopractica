@@ -5,8 +5,11 @@
 
 {% block left_block %}
     {% if user.is_authenticated %}
+        <div>Bienvenido, <strong>{{request.user}}</strong></div>
+        </br>
         <div>Practicando: </div>
         <div>Letra c</div>
+        <div id="left_info"></div>
     {% endif %}
 {% endblock %}
 
@@ -16,7 +19,8 @@
     <button class="btn btn-sm btn-outline-primary" id="mil">1000</button>
     <button class="btn btn-sm btn-outline-primary" id="diez_mil">10000</button>-->
     <div id="text" style="font-size: 25px;"></div>
-    <input id="input" type="text" autofocus onkeydown="keyPressed(event)"> 
+    <div id="form"><input style="background-color:  #2e323d; color: #2e323d"class="form-control form-control-lg" type="text" autofocus onkeydown="keyPressed(event)"  style="vertical-align: bottom;"></div>
+    <div id="results" style="font-size: 75px; text-align: center;"></div>
 {% endblock %}
 
 {% block right_block %}
