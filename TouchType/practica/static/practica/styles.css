@@ -19,16 +19,24 @@ body {
     color: var(--error);
 }
 
-.unwritten{
+.extra {
+    color: var(--warning);
+}
+
+.unwritten {
     color: var(--background);
 }
 
 .correct {
-    color: var(--text);
+    color: var(--success);
 }
 
 .hidden_bars {
     display: none;
+}
+
+#text {
+    color: var(--background);
 }
 
 #input{

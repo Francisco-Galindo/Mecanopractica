@@ -2,6 +2,7 @@ var total_presses = 0;
 var correct_presses = 0;
 var incorrect_presses = 0;
 var raw_spaces = 0;
+var correct_spaces = 0;
 var playing = false;
 var playing_timer = 0;
 var timer = 0;
@@ -9,28 +10,25 @@ var acc;
 var raw_wpm;
 document.addEventListener('DOMContentLoaded', function() {
 
-    words('1000');
+    fetchWords('1000');
 
-    setInterval(function(){
-        if (playing == true) {
+    loop = setInterval(function(){
+        if (playing === true) {
             timer ++;
-            playing_timer --;
+            playing_timer -= 0.5;
             if (timer === 60 || playing_timer === 0) {
-                results();
+                playing = false;
             }
-            show_vel();
-            console.log(timer, raw_wpm, acc);
+            showVel();
+            //console.log(timer, raw_wpm, acc, playing_timer);
+        } else if (playing === false && playing_timer > 0){
+            results();
+            clearInterval(loop);
         }
-    }, 1000)
-
-    //Timer para contar el tiempo restante y saber si el usuario esta afk
-
+    }, 500)
 });
-//Hay que crear una funcion para que inicie el juego, que llame a words y ponga playing en true
 
-// Catalogo de los grupos
-
-function words(words) {
+function fetchWords(words) {
 
     fetch('practica/' + words)
     .then(response => response.json())
@@ -42,9 +40,16 @@ function words(words) {
             const letters = JSON.stringify(word.word);
             const n = letters.length;
             for(let i = 1; i < n-1; i++) {
-                div.innerHTML += `<span class="unwritten">${letters.charAt(i)}</span>`;
+                const letter = document.createElement("span");
+                letter.innerHTML = `${letters.charAt(i)}`
+                letter.classList.add("unwritten");
+                div.append(letter);
             }
-            div.innerHTML += `<span class="unwritten"> </span>`;
+            const space = document.createElement("span");
+            space.innerHTML = ` `
+            space.classList.add("unwritten");
+            space.classList.add("space");
+            div.append(space);
         });
     })
     .catch(error => {
@@ -52,78 +57,146 @@ function words(words) {
     });
 }
 
-// Función que obtiene la primer letra no escrita entre los spans, ¨n¨ es un offset para obtener algún otro span.
-function getUnwrittenKey(n) {
+function searchSpan(span_class, offset, index_or_element, first_last) {
 
-    // Obteniendo un array de todos los spans que son hijos del div con el texto
     const spans = document.querySelector('#text').children;
     const span_list = Array.from(spans);
-    
+
+    const all_leters = span_list.length - 1;
+
     let i = 0;
-    while (span_list[i].className != "unwritten")
-    {
-        i++;
+    if (first_last === "first") {
+        while (i < all_leters && span_list[i].className != span_class)  {
+            i++;
+        }
+    } else {
+        for (let j = 0; j < all_leters; j++)
+        {
+            if (span_list[j].className == span_class) {
+                i = j;
+            }
+        }
     }
+        
     var index;
-    index = i + n;
+    index = i + offset;
     if (index < 0) {
         index = 0;
+    } else if (index >= all_leters) {
+        return null;
     }
 
+    if (index_or_element === "index")
+    {
+        return index;
+    }
     return span_list[index];
 }
 
+
+function checkCorrectWord() {
+    var is_correct = true;
+    const spans = document.querySelector('#text').children;
+    const span_list = Array.from(spans);
+    var word = [];
+
+    var first_letter = searchSpan("written space", 1, "index", "last");
+    if (first_letter === 1) {
+        first_letter = 0;
+    }
+    const last_letter = searchSpan("unwritten space", -1, "index", "first");
+    span_list[last_letter + 1].className = "written space";
+
+    for (var i = first_letter; i <= last_letter; i++) {
+        word.push(span_list[i]);
+    }
+    word.forEach(function(span) {
+        if (span.className == "written incorrect" || span.className == "unwritten") {
+            if (span.className == "unwritten") {
+                span.className = "writtten";
+            }
+            is_correct = false;
+        }
+    });
+
+    if (is_correct === false) {
+        word.forEach(function(span) {
+            span.style = "border-bottom: 2px solid red;";
+        });
+    } else {
+        correct_spaces ++;
+    }
+
+    return is_correct;
+}
+
+
 function deleteKey() {
-    key_to_delete = getUnwrittenKey(-1);
-    key_to_delete.className = "unwritten";
+    const key_to_delete = searchSpan("unwritten", -1, "element", "first"); 
+    const previous_key_to_delete = searchSpan("unwritten", -2, "element", "first");
+
+    if (key_to_delete.className !== "written space" && key_to_delete.className !== "unwritten space") {
+        key_to_delete.className = "unwritten";
+
+    } else if (key_to_delete.className === "unwritten space"){
+        previous_key_to_delete.className = "unwritten";
+    }
 }
 
 // La función de escribir debe terminar la prueba cuando el tiempo acabe o (se escriba correctamente la última palabra, o se presione espacio en la última palabra), esto depende del modo en el que este el programa
 function checkKeyPresses(key) {
-    // checa solamente la u;tima letra de la forma y comparala con la letra correspondiente en los spans
-    let a = getUnwrittenKey(-1);
+
+
     // Línea para evitar que el shift sea detectado de manera incorrecta
     if (key !== "Shift"){
         // Obtener el span con el cual comparar lo que ha sido tecleado
-        const other_key = getUnwrittenKey(0);
-        if (key === " ") {
-            raw_spaces ++;
+        const other_key = searchSpan("unwritten", 0, "element", "first");
+        if (other_key !== null) {
+            const previous_other_key = searchSpan("unwritten", -1, "element", "first");
+            console.log(key, other_key.innerHTML);
+            // Si coincide el contenido del span con la tecla oprimida, marcar el span como correct
+            if (previous_other_key.innerHTML === " " && previous_other_key.className === "unwritten space") {
+                incorrect_presses ++;
+            }
+            else if (key === other_key.innerHTML) {
+                other_key.className = "written correct";
+                correct_presses ++;
+            } else {
+                other_key.className = "written incorrect";
+                incorrect_presses ++;
+            }
+        } else {
+            playing = false;
         }
-        // Si coincide el contenido del span con la tecla oprimida, marcar el span como correct
-        if (key === other_key.innerHTML) {
-            other_key.className = "correct";
-            correct_presses ++;
-        }
-        else {
-            other_key.className = "incorrect";
-            incorrect_presses ++;
-        }
-        total_presses ++;
     }
-    
 }
+
 
 // Esta función es llamada cuando se presiona una tecla en el modo de practica
 //Se ocupa de tomar la decision de llamar la función correspondiente dependiendo de si fue presionado el Backspace u otra tecla
 function keyPressed(event) {
+    total_presses ++;
+    playing = true;
+    playing_timer = 15;
     const key = event.key;
     if (key == "Backspace") {
         deleteKey();
-    }
-    else {
+        raw_spaces++;
+    } else if (key === " ") {
+        console.log(checkCorrectWord());
+        raw_spaces++;
+    } else {
         checkKeyPresses(key);
     }
-    playing = true;
-    playing_timer = 15;
 }
 
 // asd
 function calc_vel_acc(){
-    raw_wpm = Math.round((raw_spaces / timer) * 60);
+    raw_wpm = Math.round((correct_spaces / timer) * 60);
     acc = Math.round((correct_presses / total_presses) * 100);
 }
 
-function show_vel(){
+function showVel(){
     calc_vel_acc()
     div = document.querySelector('#left_info');
     div.innerHTML = `acc: ${acc}%, wpm: ${raw_wpm}`
@@ -131,6 +204,7 @@ function show_vel(){
 
 function results() {
     playing = false;
+    console.log("false");
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     document.querySelector('#results').style.display = 'block';
