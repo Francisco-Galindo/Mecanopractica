@@ -9,7 +9,7 @@
 
 body {
     background-color: var(--background);
-    font-family: "Lucida Console", "Courier New", monospace;
+    font-family: "Roboto Mono", "Courier New", monospace;
     color: var(--text);
 
     align-items: center;
@@ -24,7 +24,7 @@ body {
 }
 
 .unwritten {
-    color: var(--background);
+    color: var(--text);
 }
 
 .correct {

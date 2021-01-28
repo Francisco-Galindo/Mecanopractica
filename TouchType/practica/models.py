@@ -3,9 +3,11 @@ from django.db import models
 
 class Group(models.Model):
     group = models.IntegerField(default=0)
+    def __str__(self):
+        return f"{self.group}"
 
 class User(AbstractUser):
-    pass
+    group = models.ForeignKey("Group", on_delete=models.PROTECT, null=True, blank=True)
 
 class Words_es(models.Model):
     word = models.CharField(max_length=33)

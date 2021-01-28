@@ -6,7 +6,7 @@ from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
 import random
 
-from .models import User, Words_es
+from .models import Group, User, Words_es, Text_Author, Text_Mode, Text, Session
 
 def main_page(request):
     return render(request, 'practica/practice.html')
@@ -45,24 +45,43 @@ def register_view(request):
         # Asegurarse de que la confirmacion de contrasena es igual
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
+        group = request.POST["group"]
+        try:
+            chosen_group = Group.objects.get(group = group)
+        except  ValueError:
+            chosen_group = 0
+
         if password != confirmation:
             return render(request, "practica/register.html", {
                 "warning": "Las contraseñas deben coincidir."
             })
 
         # Trata de crear un nuevo usuario
-        try:
-            user = User.objects.create_user(username, password)
-            user.save()
-        except IntegrityError:
-            return render(request, "practica/register.html", {
-                "warning": "Ese nombre de usuario ya está en uso."
-            })
-        login(request, user)
-        return HttpResponseRedirect(reverse("main_page"))
+        if chosen_group != 0:
+            try:
+                user = User.objects.create_user(username=username, password=password, group=chosen_group)
+                user.save()
+            except IntegrityError:
+                return render(request, "practica/register.html", {
+                    "warning": "Ese nombre de usuario ya está en uso."
+                })
+            login(request, user)
+            return HttpResponseRedirect(reverse("main_page"))
+        else:
+            try:
+                user = User.objects.create_user(username=username, password=password)
+                user.save()
+            except IntegrityError:
+                return render(request, "practica/register.html", {
+                    "warning": "Ese nombre de usuario ya está en uso."
+                })
+            login(request, user)
+            return HttpResponseRedirect(reverse("main_page"))
 
     else:
-        return render(request, "practica/register.html")
+        return render(request, "practica/register.html", {
+            "groups": Group.objects.all()
+        })
 
 
 

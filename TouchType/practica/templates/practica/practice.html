@@ -14,13 +14,13 @@
 {% endblock %}
 
 {% block main_block %}
-    <!--<div style="font-size: 40px;">Hola gente</div>
-    <button class="btn btn-sm btn-outline-primary" id="doscientos">200</button>
-    <button class="btn btn-sm btn-outline-primary" id="mil">1000</button>
-    <button class="btn btn-sm btn-outline-primary" id="diez_mil">10000</button>-->
-    <div id="text" style="font-size: 25px;"></div>
-    <div id="form"><input style="background-color:  #2e323d; color: #2e323d"class="form-control form-control-lg" type="text" autofocus onkeydown="keyPressed(event)"  style="vertical-align: bottom;"></div>
-    <div id="results" style="font-size: 75px; text-align: center;"></div>
+    {% if user.is_authenticated %}
+        <div id="text" style="font-size: 25px;"></div>
+        <div id="form"><input value="" style="background-color:  #2e323d; color: #2e323d"class="form-control form-control-lg" type="text" autofocus onkeydown="keyPressed(event)"  style="vertical-align: bottom;"></div>
+        <div id="results" style="font-size: 50px; text-align: center;"></div>
+    {% else %}
+        <div style="font-size: 30px;">Inicia sesión para poder practicar</div>
+    {% endif %}
 {% endblock %}
 
 {% block right_block %}
@@ -30,4 +30,8 @@
 
 {% block script1 %}
     <script src="{% static 'practica/words.js' %}"></script>
+{% endblock %}
+
+{% block script2 %}
+    <script src="{% static 'practica/main_menus.js' %}"></script>
 {% endblock %}
