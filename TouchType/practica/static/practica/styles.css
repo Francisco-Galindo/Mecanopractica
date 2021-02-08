@@ -15,6 +15,17 @@ body {
     align-items: center;
 }
 
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--background);
+    z-index: 1;
+  }
+
+.show {display:block;}
+
+.dropdown-content button:hover {background-color: #ddd}
+
 .incorrect{
     color: var(--error);
 }
@@ -72,7 +83,7 @@ body {
     fill: var(--text);
 }
 
-#botones > a > img:hover{
+.hij_botones > img:hover{
     height: 17pt;
     width: 17pt;
 }

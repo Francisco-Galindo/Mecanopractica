@@ -14,24 +14,30 @@
     <body>
         <div class="grid">
             <div id="bar">
-                <div><a style="font-size: large;" href="{% url 'main_page' %}">CoyoType xdxdxd</a></div>
+                <div><a style="font-size: large;" href="#">CoyoType xdxdxd</a></div>
                 <div style="justify-self: center; font-size: large;">{% block menu_title %}{% endblock %}</div>
                 <div id="botones">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'logout' %}" style="grid-column: -3; grid-row: 1;">
+                        <a class="boton" href="{% url 'logout' %}" style="grid-column: -3; grid-row: 1;">
                             <img src="{% static 'practica/media/logout.svg' %}" alt="Cerrar sesión"/>
                         </a>
                     {% else %}
-                        <a href="{% url 'register' %}" style="grid-column: -2; grid-row: 1;">
+                        <a class="boton" href="{% url 'register' %}" style="grid-column: -2; grid-row: 1;">
                             <img src="{% static 'practica/media/register.svg' %}" alt="Registrarse"/>
                         </a>
                         <a href="{% url 'login' %}" style="grid-column: -3; grid-row: 1;">
                             <img src="{% static 'practica/media/enter.svg' %}" alt="Iniciar sesión"/>
                         </a>
                     {% endif %}
-                    <a href="{% url 'main_page' %}" style="grid-column: -4; grid-row: 1;">
+                    <div  class="boton" id="settings_button" onclick="dropdown()" style="grid-column: -4; grid-row: 1; cursor: pointer;">
                         <img src="{% static 'practica/media/settings.svg' %}" alt="Opciones"/>
-                    </a>
+                        <div id="modes" class="dropdown-content">
+                            <p>Modos de Juego</p>
+                            {% for mode in modes %}
+                                <button name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="btn btn-dark">{{mode}}</button></br>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

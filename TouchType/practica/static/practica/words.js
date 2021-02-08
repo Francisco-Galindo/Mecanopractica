@@ -1,3 +1,4 @@
+var mode;
 var total_presses = 0;
 var correct_presses = 0;
 var incorrect_presses = 0;
@@ -8,27 +9,45 @@ var playing_timer = 0;
 var timer = 0;
 var acc;
 var wpm;
-var wpm_list = []
-var acc_list = []
-document.addEventListener('DOMContentLoaded', function() {
+var wpm_list = [];
+var acc_list = [];
 
-    fetchWords('10000');
+document.addEventListener('DOMContentLoaded', page());
+
+function page() {
+
+    total_presses = 0;
+    correct_presses = 0;
+    incorrect_presses = 0;
+    raw_spaces = 0;
+    correct_spaces = 0;
+    playing = false;
+    playing_timer = 0;
+    timer = 0;
+    wpm_list = [];
+    acc_list = [];
+    
+    mode = localStorage.getItem('mode');
+    fetchWords(mode);
 
     loop = setInterval(function(){
         if (playing === true) {
             timer += 0.5;
             playing_timer -= 0.5;
-            if (timer === 60 || playing_timer === 0) {
+            console.log(playing_timer)
+            if (timer === 60 || playing_timer <= 0) {
                 playing = false;
+                results();
+                clearInterval(loop);
             }
             showVel();
             //console.log(correct_spaces, timer, raw_wpm, acc, playing_timer);
-        } else if (playing === false && playing_timer > 0){
-            results();
-            clearInterval(loop);
+        } else if (playing === false && timer > 0){
+            postResults();
+            clearInterval(loop);   
         }
     }, 500)
-});
+}
 
 function refreshPage(){
     window.location.reload();
@@ -36,12 +55,12 @@ function refreshPage(){
 
 function fetchWords(words) {
 
-    fetch('practica/' + words)
+    fetch('/practica/' + words)
     .then(response => response.json())
     .then(words => {
+        console.log(words);
         const div = document.querySelector('#text');
         div.innerHTML = "";
-        console.log(words);
         words.forEach(function(word) {
             const letters = JSON.stringify(word.word);
             const n = letters.length;
@@ -59,6 +78,8 @@ function fetchWords(words) {
         });
     })
     .catch(error => {
+        const div = document.querySelector('#text');
+        div.innerHTML = "";
         console.log('Error: ', error);
     });
 }
@@ -195,22 +216,22 @@ function keyPressed(event) {
             checkKeyPresses(key);
             total_presses ++;
         }
-    }
-    
+    }  
 }
 
-// asd
+// asd 
 function calcVel(){
-    wpm = Math.round((correct_spaces / timer) * 60);
-    acc = Math.round((correct_presses / total_presses) * 100);
+    wpm = Math.trunc(((correct_spaces / timer) * 60) * 100) / 100;
+    acc = Math.trunc(((correct_presses / total_presses) * 100) * 100) / 100;
     wpm_list.push(wpm);
     acc_list.push(acc);
 }
 
 function showVel(){
-    calcVel()
+    calcVel();
     div = document.querySelector('#left_info');
-    div.innerHTML = `acc: ${acc}%, wpm: ${wpm}`
+    div.innerHTML = `acc: ${Math.round(acc)}%, wpm: ${Math.round(wpm)}`;
+
 }
 
 function results() {
@@ -224,4 +245,52 @@ function results() {
     div.innerHTML += `</br> <span style="font-size: 75px;"> wpm: ${wpm}</span>`;
     div.innerHTML += `</br>acc: ${acc}%`;
     div.innerHTML += `</br><button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`
+}
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+function postResults() {
+
+    const csrftoken = getCookie('csrftoken');
+    const request = new Request(
+        `/sessions/${mode}/`,
+        {headers: {'X-CSRFToken': csrftoken}}
+    );
+    fetch(request, {
+        method: 'POST',
+        mode: 'same-origin',
+        body: JSON.stringify({
+            mode: mode,
+            wpm: wpm,
+            acc: acc,
+            time: timer
+        })
+    })
+    .then(response => response.json())
+    .then(results())
+    .catch(error => {
+        console.log(error);
+    });
+
+    fetch(`/sessions/${mode}/`)
+    .then(response => response.json())
+    .then(sessions => {
+        console.log("lol " + sessions);
+    });
 }
