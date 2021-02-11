@@ -17,8 +17,6 @@ def main_page(request):
     tip_id = random.randint(1, tips.count())
     tip = Tip.objects.get(pk=tip_id)
 
-    #best_scores = Session.objects.order_by("-wpm")[:5]
-
     modes = Text_Mode.objects.all()
 
     return render(request, 'practica/practice.html', {
@@ -101,7 +99,6 @@ def register_view(request):
 
 
 
-
 # A P I
 
 
@@ -121,19 +118,20 @@ def sessions(request, mode):
 
         return JsonResponse({"message": "Session saved."}, status=201)
 
+    # Subiendo resultados de una sesion si el metodo es POST
     elif request.method == "GET":
         sessions = Session.objects.filter(mode=mode_name).order_by("-wpm")[:10]
         best_sessions = []
-        current_session = {}
+        current_mode = getattr(mode_name, 'mode')
         for session in sessions:
+            print(f"lol: {session}")
+            current_session = {}
             user = getattr(session, 'user')
             username = getattr(user, 'username')
             current_session["user"] = username
 
-            mode = getattr(session, 'mode')
-            current_mode = getattr(mode, 'mode')
             current_session["mode"] = current_mode
-            
+
             current_session["wpm"] = getattr(session, 'wpm')
             current_session["acc"] = getattr(session, 'acc')
             current_session["time"] = getattr(session, 'time')
@@ -144,6 +142,8 @@ def sessions(request, mode):
 
             best_sessions.append(current_session)
 
+        for session in best_sessions:
+            print(json.dumps(session))
         return JsonResponse([json.dumps(session) for session in best_sessions], safe=False)
 
 

@@ -70,6 +70,17 @@ body {
     padding: 20px;
 }
 
+table {
+    width: 100%;
+}
+
+td, th, tr {
+    font-size: smaller;
+    border: 2px solid var(--text);
+    text-align: left;
+    padding: 4px;
+}
+
 #bar {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -89,7 +100,7 @@ body {
 }
 
 #main_grid {
-    grid-auto-rows: minmax(450px, auto);
+    grid-auto-rows: minmax(450px, 450px);
     position: absolute;
 
 }

@@ -229,7 +229,7 @@ function calcVel(){
 
 function showVel(){
     calcVel();
-    div = document.querySelector('#left_info');
+    const div = document.querySelector('#left_info');
     div.innerHTML = `acc: ${Math.round(acc)}%, wpm: ${Math.round(wpm)}`;
 
 }
@@ -239,12 +239,13 @@ function results() {
     console.log(acc_list, wpm_list);
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
-    document.querySelector('#results').style.display = 'block';
-    div = document.querySelector('#results');
+    const div = document.querySelector('#results');
     div.innerHTML += `Resultados`;
     div.innerHTML += `</br> <span style="font-size: 75px;"> wpm: ${wpm}</span>`;
     div.innerHTML += `</br>acc: ${acc}%`;
     div.innerHTML += `</br><button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`
+    div.style.display = 'block';
+    //document.querySelector('#results').style.display = 'block';
 }
 
 
@@ -284,13 +285,26 @@ function postResults() {
     })
     .then(response => response.json())
     .then(results())
+    .then (function() {
+        fetch(`/sessions/${mode}/`)
+        .then(response => response.json())
+        .then(sessions => {
+            console.log(sessions);
+            const div = document.querySelector('#left');
+    
+            div.innerHTML = `<h6>Tablero modo ${mode}</h6>`;
+            var table = document.createElement("TABLE");
+            table.innerHTML = `<tr><td>Usuario</td><td>WPM</td><td>ACC</td></tr>`;
+            
+            sessions.forEach(function(top) {
+                table.innerHTML += `<tr><td>${JSON.parse(top).user}</td><td>${JSON.parse(top).wpm}</td><td>${JSON.parse(top).acc}%</td></tr>`;
+            })
+            div.append(table);
+        });
+    })
     .catch(error => {
         console.log(error);
     });
 
-    fetch(`/sessions/${mode}/`)
-    .then(response => response.json())
-    .then(sessions => {
-        console.log("lol " + sessions);
-    });
+
 }
