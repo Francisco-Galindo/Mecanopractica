@@ -16,6 +16,19 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username}"
 
+class Easy(models.Model):
+    substring = models.CharField(max_length=33)
+    weight = models.FloatField()
+
+    def __str__(self):
+        return f"{self.substring}"
+
+    def serialize(self):
+        return {
+            "word": self.substring,
+            "weight": self.weight
+        }
+
 class Words_es(models.Model):
     word = models.CharField(max_length=33)
     weight = models.FloatField()

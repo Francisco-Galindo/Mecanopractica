@@ -10,8 +10,9 @@ import random
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 
-from .models import Group, User, Words_es, Text_Author, Text_Mode, Text, Session, Tip
-
+#from .models import Group, User, Easy, Words_es, Text_Author, Text_Mode, Text, Session, Tip
+from .models import *
+ 
 def main_page(request):
     tips = Tip.objects.all()
     tip_id = random.randint(1, tips.count())
@@ -124,7 +125,6 @@ def sessions(request, mode):
         best_sessions = []
         current_mode = getattr(mode_name, 'mode')
         for session in sessions:
-            print(f"lol: {session}")
             current_session = {}
             user = getattr(session, 'user')
             username = getattr(user, 'username')
@@ -142,8 +142,7 @@ def sessions(request, mode):
 
             best_sessions.append(current_session)
 
-        for session in best_sessions:
-            print(json.dumps(session))
+
         return JsonResponse([json.dumps(session) for session in best_sessions], safe=False)
 
 
@@ -151,10 +150,25 @@ def sessions(request, mode):
 def words(request, mode):
 
     if request.method == "GET":
-        words = Words_es.objects.order_by("-weight")[:int(mode)]
+        try:
+            words = Words_es.objects.order_by("-weight")[:int(mode)]
+        except ValueError:
+            if mode[0: 1] == 'F':
+                words = Easy.objects.order_by("-weight")[:1000]
+            else:
+                words = Easy.objects.order_by("-weight")[:1]
+
         weights = []
         for word in words:
             weight = getattr(word, "weight")
+            try:
+                string = getattr(word, "word")
+            except AttributeError:
+                string = getattr(word, "substring")
+                for char in str.lower(string):
+                    if char == 'a':
+                        weight *= 1.5
+
             weights.append(weight)
 
         words_to_send = random.choices(

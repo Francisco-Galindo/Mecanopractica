@@ -43,8 +43,9 @@ function page() {
             showVel();
             //console.log(correct_spaces, timer, raw_wpm, acc, playing_timer);
         } else if (playing === false && timer > 0){
+            clearInterval(loop); 
             postResults();
-            clearInterval(loop);   
+   
         }
     }, 500)
 }
@@ -175,7 +176,6 @@ function checkKeyPresses(key) {
 
     // Obtener el span con el cual comparar lo que ha sido tecleado
     const other_key = searchSpan("unwritten", 0, "element", "first");
-    console.log(key)
     if (other_key !== null) {
         const previous_other_key = searchSpan("unwritten", -1, "element", "first");
 
@@ -234,18 +234,21 @@ function showVel(){
 
 }
 
-function results() {
+function results(valid) {
     playing = false;
     console.log(acc_list, wpm_list);
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     const div = document.querySelector('#results');
     div.innerHTML += `Resultados`;
+    if (valid === false) {
+        div.innerHTML += `</br> <span style="font-size: 35px; color: red;">Esta partida no es válida</span>`;
+    }
     div.innerHTML += `</br> <span style="font-size: 75px;"> wpm: ${wpm}</span>`;
     div.innerHTML += `</br>acc: ${acc}%`;
     div.innerHTML += `</br><button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`
     div.style.display = 'block';
-    //document.querySelector('#results').style.display = 'block';
+    console.log("resultados")
 }
 
 
@@ -265,6 +268,25 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function getSessions(func, value) {
+    fetch(`/sessions/${mode}/`)
+    .then(response => response.json())
+    .then(sessions => {
+        console.log(sessions);
+        const div = document.querySelector('#left');
+
+        div.innerHTML = `<h6>Tablero modo ${mode}</h6>`;
+        var table = document.createElement("TABLE");
+        table.innerHTML = `<tr><td>Usuario</td><td>WPM</td><td>ACC</td></tr>`;
+        
+        sessions.forEach(function(top) {
+            table.innerHTML += `<tr><td>${JSON.parse(top).user}</td><td>${JSON.parse(top).wpm}</td><td>${JSON.parse(top).acc}%</td></tr>`;
+        })
+        div.append(table);
+        console.log("sesiones")
+        func(value)
+    });
+}
 
 function postResults() {
 
@@ -273,38 +295,24 @@ function postResults() {
         `/sessions/${mode}/`,
         {headers: {'X-CSRFToken': csrftoken}}
     );
-    fetch(request, {
-        method: 'POST',
-        mode: 'same-origin',
-        body: JSON.stringify({
-            mode: mode,
-            wpm: wpm,
-            acc: acc,
-            time: timer
-        })
-    })
-    .then(response => response.json())
-    .then(results())
-    .then (function() {
-        fetch(`/sessions/${mode}/`)
-        .then(response => response.json())
-        .then(sessions => {
-            console.log(sessions);
-            const div = document.querySelector('#left');
-    
-            div.innerHTML = `<h6>Tablero modo ${mode}</h6>`;
-            var table = document.createElement("TABLE");
-            table.innerHTML = `<tr><td>Usuario</td><td>WPM</td><td>ACC</td></tr>`;
-            
-            sessions.forEach(function(top) {
-                table.innerHTML += `<tr><td>${JSON.parse(top).user}</td><td>${JSON.parse(top).wpm}</td><td>${JSON.parse(top).acc}%</td></tr>`;
+    if (acc >= 75 && wpm <= 300) {
+        fetch(request, {
+            method: 'POST',
+            mode: 'same-origin',
+            body: JSON.stringify({
+                mode: mode,
+                wpm: wpm,
+                acc: acc,
+                time: timer
             })
-            div.append(table);
-        });
-    })
-    .catch(error => {
-        console.log(error);
-    });
-
-
+        })
+        .then(response => response.json())
+        .then(getSessions(results, true))
+        .catch(error => {
+            console.log(error);
+        });              
+    } else {
+        getSessions(results, false)
+    }
+    
 }
