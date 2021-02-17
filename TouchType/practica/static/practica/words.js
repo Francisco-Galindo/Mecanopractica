@@ -9,6 +9,7 @@ var playing_timer = 0;
 var timer = 0;
 var acc;
 var wpm;
+var terminado;
 var wpm_list = [];
 var acc_list = [];
 
@@ -121,7 +122,7 @@ function searchSpan(span_class, offset, index_or_element, first_last) {
 }
 
 
-function checkCorrectWord() {
+function checkCorrectWord(mark) {
     var is_correct = true;
     const spans = document.querySelector('#text').children;
     const span_list = Array.from(spans);
@@ -132,27 +133,31 @@ function checkCorrectWord() {
         first_letter = 0;
     }
     const last_letter = searchSpan("unwritten space", -1, "index", "first");
-    span_list[last_letter + 1].className = "written space";
+    if ((mark === true)) {
+        span_list[last_letter + 1].className = "written space";
+    }
 
     for (var i = first_letter; i <= last_letter; i++) {
         word.push(span_list[i]);
     }
     word.forEach(function(span) {
         if (span.className == "written incorrect" || span.className == "unwritten") {
-            if (span.className == "unwritten") {
+            if (mark === true && span.className == "unwritten") {
                 span.className = "writtten";
             }
             is_correct = false;
         }
     });
 
-    if (is_correct === false) {
-        word.forEach(function(span) {
-            span.style = "border-bottom: 2px solid #ee5d43;";
-        });
-    } else {
-        correct_spaces ++;
-        correct_presses ++;
+    if ((mark === true)) {
+        if (is_correct === false) {
+            word.forEach(function(span) {
+                span.style = "border-bottom: 2px solid #ee5d43;";
+            });
+        } else {
+            correct_spaces ++;
+            correct_presses ++;
+        }
     }
 
     return is_correct;
@@ -190,8 +195,12 @@ function checkKeyPresses(key) {
             other_key.className = "written incorrect";
             incorrect_presses ++;
         }
-    } else {
-        playing = false;
+    }
+    // Haciendo un chequeo de la palabra automaticamente si se trata de la ultima palabra del juego 
+    if (searchSpan("unwritten", 1, "element", "first") === null && checkCorrectWord(false)) {
+        checkCorrectWord(true);
+        playing = false;    
+        terminado = 1;
     }
 }
 
@@ -209,7 +218,10 @@ function keyPressed(event) {
         } else if (key === " ") {
             var form = document.querySelector("#form")
             form.value = ""
-            console.log(checkCorrectWord());
+            if(!checkCorrectWord(true) && searchSpan("unwritten", 0, "element", "first") === null) {
+                playing = false;
+                terminado = 1;
+            }
             total_presses ++;
             raw_spaces++;
         } else {
@@ -295,7 +307,7 @@ function postResults() {
         `/sessions/${mode}/`,
         {headers: {'X-CSRFToken': csrftoken}}
     );
-    if (acc >= 75 && wpm <= 300) {
+    if (acc >= 75 && wpm <= 300 && terminado === 1) {
         fetch(request, {
             method: 'POST',
             mode: 'same-origin',
