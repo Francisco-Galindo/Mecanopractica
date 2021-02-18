@@ -10,13 +10,22 @@ var timer = 0;
 var acc;
 var wpm;
 var terminado;
+var fingers = [];
+var finger_letters = [['q', 'a', 'á', 'z', '1', '!'], 
+                        ['w', 's', 'x', '2', '\"'], 
+                        ['e', 'é', 'd', 'c', '3', '#'], 
+                        ['r', 'f', 'v', '4', '$', 't', 'g', 'b'], 
+                        ['u', 'ú', 'j', 'm', '7', '/', 'y', 'h', 'n'], 
+                        ['i', 'í', 'k', ',', '(', '8'], 
+                        ['o', 'ó', 'l', '.', '9', ')'], 
+                        ['p', 'ñ', '-', '=', '0']];
+
 var wpm_list = [];
 var acc_list = [];
 
 document.addEventListener('DOMContentLoaded', page());
 
 function page() {
-
     total_presses = 0;
     correct_presses = 0;
     incorrect_presses = 0;
@@ -25,9 +34,17 @@ function page() {
     playing = false;
     playing_timer = 0;
     timer = 0;
+    terminado = 0;
+    fingers = [];
+    fingers.length = 16;
+    for (let i=0; i<16; ++i) fingers[i] = 0;
     wpm_list = [];
     acc_list = [];
     
+    var lol = `lol `;
+    lol += 'ahora';
+    console.log(lol);
+
     mode = localStorage.getItem('mode');
     fetchWords(mode);
 
@@ -162,8 +179,16 @@ function checkCorrectWord(mark) {
 
     return is_correct;
 }
-
-
+function checkWhatFinger(key, finger_array) {
+    var which_finger = -1;
+    finger_array.forEach(function(finger) {
+        if (finger.includes(key)) {
+            //console.log(finger);
+            which_finger = finger_array.indexOf(finger);
+        }
+    })
+    return which_finger;
+}
 function deleteKey() {
     const key_to_delete = searchSpan("unwritten", -1, "element", "first"); 
     const previous_key_to_delete = searchSpan("unwritten", -2, "element", "first");
@@ -184,16 +209,22 @@ function checkKeyPresses(key) {
     if (other_key !== null) {
         const previous_other_key = searchSpan("unwritten", -1, "element", "first");
 
-        // Si coincide el contenido del span con la tecla oprimida, marcar el span como correct
+        
         if (previous_other_key.innerHTML === " " && previous_other_key.className === "unwritten space") {
             incorrect_presses ++;
         }
-        else if (key === other_key.innerHTML) {
-            other_key.className = "written correct";
-            correct_presses ++;
-        } else {
-            other_key.className = "written incorrect";
-            incorrect_presses ++;
+        // Si coincide el contenido del span con la tecla oprimida, marcar el span como correct
+        else {
+            var index_finger = checkWhatFinger(other_key.innerHTML, finger_letters);
+            if (key === other_key.innerHTML) {
+                other_key.className = "written correct";
+                correct_presses ++;
+                fingers[2*index_finger] ++;
+            } else {
+                other_key.className = "written incorrect";
+                incorrect_presses ++;
+                fingers[2*index_finger + 1] ++;
+            }
         }
     }
     // Haciendo un chequeo de la palabra automaticamente si se trata de la ultima palabra del juego 
@@ -212,7 +243,7 @@ function keyPressed(event) {
     if (!(event.ctrlKey || event.shiftKey || event.altKey || event.isComposing || key === "Dead" || key === "OS")) {
         playing = true;
         playing_timer = 15;
-    
+
         if (key == "Backspace") {
             deleteKey();
         } else if (key === " ") {
@@ -308,6 +339,12 @@ function postResults() {
         {headers: {'X-CSRFToken': csrftoken}}
     );
     if (acc >= 75 && wpm <= 300 && terminado === 1) {
+        var sent_fingers = '';
+        fingers.forEach(function(finger) {
+            sent_fingers += `${finger},`
+        })
+
+        console.log(sent_fingers);
         fetch(request, {
             method: 'POST',
             mode: 'same-origin',
@@ -315,14 +352,15 @@ function postResults() {
                 mode: mode,
                 wpm: wpm,
                 acc: acc,
-                time: timer
+                time: timer,
+                fingers: sent_fingers
             })
         })
         .then(response => response.json())
         .then(getSessions(results, true))
         .catch(error => {
             console.log(error);
-        });              
+        });
     } else {
         getSessions(results, false)
     }

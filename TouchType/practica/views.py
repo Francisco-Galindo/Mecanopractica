@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.core import serializers
 import json
 import random
+import operator
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 
@@ -114,6 +115,32 @@ def sessions(request, mode):
         acc = data.get("acc")
         time = data.get("time")
 
+        sent_fingers = data.get("fingers")
+        split_sent = sent_fingers.split(',')
+        
+        fingers_adder = []
+        for finger in split_sent:
+            if finger != '':
+                fingers_adder.append(int(finger))
+
+        user_fingers = getattr(user, "fingers")
+        split_user = user_fingers.split(',')
+
+        fingers_current = []
+        for finger in split_user:
+            if finger != '':
+                fingers_current.append(int(finger))
+        
+        fingers_new_int = list(map(operator.add, fingers_adder, fingers_current))
+
+        fingers_new = ''
+        for number in fingers_new_int:
+            fingers_new += str(number)
+            fingers_new += ','
+
+        user.fingers = fingers_new
+        user.save()
+
         session = Session(user=user, mode=mode_name, wpm=wpm, acc=acc, time=time)
         session.save()
 
@@ -176,6 +203,7 @@ def words(request, mode):
             weights = weights,
             k = 40
         )  
+
 
         return JsonResponse([word.serialize() for word in words_to_send], safe=False)
 

@@ -12,6 +12,7 @@ class Group(models.Model):
 
 class User(AbstractUser):
     group = models.ForeignKey("Group", on_delete=models.PROTECT, null=True, blank=True)
+    fingers = models.CharField(max_length=128, null=True, default='0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')
 
     def __str__(self):
         return f"{self.username}"
