@@ -22,6 +22,7 @@ var finger_letters = [['q', 'a', 'á', 'z', '1', '!'],
 
 var wpm_list = [];
 var acc_list = [];
+var spans = []
 
 document.addEventListener('DOMContentLoaded', page());
 
@@ -66,6 +67,10 @@ function page() {
    
         }
     }, 500)
+
+    document.querySelector('#results').style.display = 'none';
+    document.querySelector('#text').style.display = 'block';
+    document.querySelector('#form').style.display = 'block';
 }
 
 function refreshPage(){
@@ -96,6 +101,12 @@ function fetchWords(words) {
             div.append(space);
         });
     })
+    .then(function(){ 
+        const div = document.querySelector('#text')
+        spans = div.children
+        spans[0].style.borderLeft = "3px dotted #d5ced9"
+
+    })
     .catch(error => {
         const div = document.querySelector('#text');
         div.innerHTML = "";
@@ -105,20 +116,17 @@ function fetchWords(words) {
 
 function searchSpan(span_class, offset, index_or_element, first_last) {
 
-    const spans = document.querySelector('#text').children;
-    const span_list = Array.from(spans);
-
-    const all_leters = span_list.length - 1;
+    const all_leters = spans.length - 1;
 
     let i = 0;
     if (first_last === "first") {
-        while (i < all_leters && span_list[i].className != span_class)  {
+        while (i < all_leters && spans[i].className != span_class)  {
             i++;
         }
     } else {
         for (let j = 0; j < all_leters; j++)
         {
-            if (span_list[j].className == span_class) {
+            if (spans[j].className == span_class) {
                 i = j;
             }
         }
@@ -135,14 +143,13 @@ function searchSpan(span_class, offset, index_or_element, first_last) {
     if (index_or_element === "index") {
         return index;
     }
-    return span_list[index];
+    return spans[index];
 }
 
 
 function checkCorrectWord(mark) {
     var is_correct = true;
-    const spans = document.querySelector('#text').children;
-    const span_list = Array.from(spans);
+
     var word = [];
 
     var first_letter = searchSpan("written space", 1, "index", "last");
@@ -151,14 +158,14 @@ function checkCorrectWord(mark) {
     }
     const last_letter = searchSpan("unwritten space", -1, "index", "first");
     if ((mark === true)) {
-        span_list[last_letter + 1].className = "written space";
+        spans[last_letter + 1].className = "written space";
     }
 
     for (var i = first_letter; i <= last_letter; i++) {
-        word.push(span_list[i]);
+        word.push(spans[i]);
     }
     word.forEach(function(span) {
-        if (span.className == "written incorrect" || span.className == "unwritten") {
+        if (span.className !== "written correct") {
             if (mark === true && span.className == "unwritten") {
                 span.className = "writtten";
             }
@@ -192,12 +199,20 @@ function checkWhatFinger(key, finger_array) {
 function deleteKey() {
     const key_to_delete = searchSpan("unwritten", -1, "element", "first"); 
     const previous_key_to_delete = searchSpan("unwritten", -2, "element", "first");
+    console.log(key_to_delete, previous_key_to_delete);
 
     if (key_to_delete.className !== "written space" && key_to_delete.className !== "unwritten space") {
         key_to_delete.className = "unwritten";
 
     } else if (key_to_delete.className === "unwritten space"){
+        // Para cuando se borra la última letra de una palabra
+        if (previous_key_to_delete.className === "extra-letter") {
+            var text = document.querySelector('#text');
+            const previous_other_key_index = searchSpan("unwritten", -2, "index", "first");
+            text.removeChild(text.childNodes[previous_other_key_index]);
+        } else {
         previous_key_to_delete.className = "unwritten";
+        }
     }
 }
 
@@ -211,9 +226,16 @@ function checkKeyPresses(key) {
 
         
         if (previous_other_key.innerHTML === " " && previous_other_key.className === "unwritten space") {
+            const previous_other_key_index = searchSpan("unwritten", -1, "index", "first");
+            var text = document.querySelector('#text');
+            var letter = document.createElement("span");
+            letter.innerHTML = `<span>${key}</span>`;
+            letter.classList.add("extra-letter");
+
+            text.insertBefore(letter, text.childNodes[previous_other_key_index]);
             incorrect_presses ++;
         }
-        // Si coincide el contenido del span con la tecla oprimida, marcar el span como correct
+        // Si coincide el contenido del span con la tecla oprimida, marcar el span como correct0
         else {
             var index_finger = checkWhatFinger(other_key.innerHTML, finger_letters);
             if (key === other_key.innerHTML) {
@@ -244,6 +266,14 @@ function keyPressed(event) {
         playing = true;
         playing_timer = 15;
 
+        var cursor = searchSpan("unwritten", 0, "index", "first");
+        var cursor_minus = searchSpan("unwritten", -1, "index", "first");
+        if (spans[cursor_minus].className === "unwritten space") {
+            cursor --;
+        }
+        if (spans[cursor] !== undefined) {
+            spans[cursor].style.setProperty('border-left', 'initial');
+        }
         if (key == "Backspace") {
             deleteKey();
         } else if (key === " ") {
@@ -254,10 +284,17 @@ function keyPressed(event) {
                 terminado = 1;
             }
             total_presses ++;
-            raw_spaces++;
         } else {
             checkKeyPresses(key);
             total_presses ++;
+        }
+        cursor = searchSpan("unwritten", 0, "index", "first");
+        cursor_minus = searchSpan("unwritten", -1, "index", "first");
+        if (spans[cursor_minus].className === "unwritten space") {
+            cursor --;
+        }
+        if (spans[cursor] !== undefined) {
+        spans[cursor].style.borderLeft = "3px dotted #d5ced9";
         }
     }  
 }
@@ -283,7 +320,7 @@ function results(valid) {
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     const div = document.querySelector('#results');
-    div.innerHTML += `Resultados`;
+    div.innerHTML = `Resultados`;
     if (valid === false) {
         div.innerHTML += `</br> <span style="font-size: 35px; color: red;">Esta partida no es válida</span>`;
     }

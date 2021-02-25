@@ -47,6 +47,14 @@ body {
     color: var(--success);
 }
 
+.extra-letter {
+    color: var(--warning);
+}
+
+.cursor {
+    border-right: 5px solid red;
+}
+
 .hidden_bars {
     display: none;
 }
