@@ -13,17 +13,49 @@ from datetime import datetime
 
 #from .models import Group, User, Easy, Words_es, Text_Author, Text_Mode, Text, Session, Tip
 from .models import *
- 
+
+
 def main_page(request):
     tips = Tip.objects.all()
     tip_id = random.randint(1, tips.count())
     tip = Tip.objects.get(pk=tip_id)
 
     modes = Text_Mode.objects.all()
+    worst_finger = "Anular derecho"
+    #try:
+       # user = User.objects.get(username=request.user)
+        #fingers = getattr(user, "fingers")
+        #split_user = fingers.split(',')
+
+        # Obteniendo información sobre los dedos del jugador
+       #fingers_int = []
+        #for finger in split_user:
+            #if finger != '':
+                #fingers_int.append(int(finger))
+
+        #worst_finger = min(fingers_int)
+        #if worst_finger == 0:
+            #worst_finger = "Meñique izquierdo"
+        #elif worst_finger == 1:
+            #worst_finger = "Anular izquierdo"
+        #elif worst_finger == 2:
+            #worst_finger = "Corazón izquierdo"
+        #elif worst_finger == 3:
+            #worst_finger = "Índice izquierdo"
+        #elif worst_finger == 4:
+            #worst_finger = "Índice derecho"
+        #elif worst_finger == 5:
+            #worst_finger = "Corazón derecho"
+        #elif worst_finger == 6:
+            #worst_finger = "Anular derecho"
+        #elif worst_finger == 7:
+           # worst_finger = "Meñique derecho"
+   # except 
+    #
 
     return render(request, 'practica/practice.html', {
         "tip": tip,
-        #"best_scores": best_scores,
+        "finger": worst_finger,
         "modes": modes
     })
 

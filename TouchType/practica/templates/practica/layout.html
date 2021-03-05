@@ -6,6 +6,7 @@
         <link rel ="icon" href ="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fres.publicdomainfiles.com%2Fpdf_view%2F2%2F13494554416776.png&f=1&nofb=1" type ="image/x-icon"> 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="{% static 'practica/styles.css' %}">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
         {% block script1 %}
         {% endblock %}
         {% block script2 %}
@@ -14,7 +15,7 @@
     <body>
         <div class="grid">
             <div id="bar">
-                <div><a style="font-size: large;" href="#">CoyoType xdxdxd</a></div>
+                <div><a style="font-size: large;" href="#">MecanoPractica</a></div>
                 <div style="justify-self: center; font-size: large;">{% block menu_title %}{% endblock %}</div>
                 <div id="botones">
                     {% if user.is_authenticated %}

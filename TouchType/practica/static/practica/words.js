@@ -2,7 +2,6 @@ var mode;
 var total_presses = 0;
 var correct_presses = 0;
 var incorrect_presses = 0;
-var raw_spaces = 0;
 var correct_spaces = 0;
 var playing = false;
 var playing_timer = 0;
@@ -26,11 +25,12 @@ var spans = []
 
 document.addEventListener('DOMContentLoaded', page());
 
+
+// Inicializando juego
 function page() {
     total_presses = 0;
     correct_presses = 0;
     incorrect_presses = 0;
-    raw_spaces = 0;
     correct_spaces = 0;
     playing = false;
     playing_timer = 0;
@@ -41,12 +41,9 @@ function page() {
     for (let i=0; i<16; ++i) fingers[i] = 0;
     wpm_list = [];
     acc_list = [];
-    
-    var lol = `lol `;
-    lol += 'ahora';
-    console.log(lol);
 
     mode = localStorage.getItem('mode');
+
     fetchWords(mode);
 
     loop = setInterval(function(){
@@ -62,8 +59,8 @@ function page() {
             showVel();
             //console.log(correct_spaces, timer, raw_wpm, acc, playing_timer);
         } else if (playing === false && timer > 0){
-            clearInterval(loop); 
             postResults();
+            clearInterval(loop); 
    
         }
     }, 500)
@@ -77,6 +74,7 @@ function refreshPage(){
     window.location.reload();
 } 
 
+// Haciendo fetch de las palabras que aparecerán en el juego
 function fetchWords(words) {
 
     fetch('/practica/' + words)
@@ -114,6 +112,7 @@ function fetchWords(words) {
     });
 }
 
+// Buscar alguno de los spans que se requiera usar. El primer parámetro permite saber cuál es la clase de ese span, el segundo es el desfase que se quiere tener, el tercero es para elegir si se quiere obtener el índice del elemento o el elemento en cuestión, por último se elige si se quiere obtener el primer o el último elemento con las características elegidas.
 function searchSpan(span_class, offset, index_or_element, first_last) {
 
     const all_leters = spans.length - 1;
@@ -147,6 +146,7 @@ function searchSpan(span_class, offset, index_or_element, first_last) {
 }
 
 
+// Se encarga de checar que la última palabra escrita sea correcta
 function checkCorrectWord(mark) {
     var is_correct = true;
 
@@ -186,6 +186,8 @@ function checkCorrectWord(mark) {
 
     return is_correct;
 }
+
+// Esta pequeña función se encarga de identificar a qué dedo corresp
 function checkWhatFinger(key, finger_array) {
     var which_finger = -1;
     finger_array.forEach(function(finger) {
@@ -196,17 +198,21 @@ function checkWhatFinger(key, finger_array) {
     })
     return which_finger;
 }
+
+// Función que borra la última letra que 
 function deleteKey() {
     const key_to_delete = searchSpan("unwritten", -1, "element", "first"); 
     const previous_key_to_delete = searchSpan("unwritten", -2, "element", "first");
-    console.log(key_to_delete, previous_key_to_delete);
 
+    // Cambiar la última letra escrita a no escrita
     if (key_to_delete.className !== "written space" && key_to_delete.className !== "unwritten space") {
         key_to_delete.className = "unwritten";
 
     } else if (key_to_delete.className === "unwritten space"){
+
         // Para cuando se borra la última letra de una palabra
         if (previous_key_to_delete.className === "extra-letter") {
+            // Si se trata de una letra extra (amarilla)
             var text = document.querySelector('#text');
             const previous_other_key_index = searchSpan("unwritten", -2, "index", "first");
             text.removeChild(text.childNodes[previous_other_key_index]);
@@ -235,7 +241,7 @@ function checkKeyPresses(key) {
             text.insertBefore(letter, text.childNodes[previous_other_key_index]);
             incorrect_presses ++;
         }
-        // Si coincide el contenido del span con la tecla oprimida, marcar el span como correct0
+        // Si coincide el contenido del span con la tecla oprimida, marcar el span como correcto
         else {
             var index_finger = checkWhatFinger(other_key.innerHTML, finger_letters);
             if (key === other_key.innerHTML) {
@@ -299,7 +305,7 @@ function keyPressed(event) {
     }  
 }
 
-// asd 
+// Calculando la velocidad y precisión de escritura, añadiendo los resultados a la lista que será usada en el histograma al final de una partida
 function calcVel(){
     wpm = Math.trunc(((correct_spaces / timer) * 60) * 100) / 100;
     acc = Math.trunc(((correct_presses / total_presses) * 100) * 100) / 100;
@@ -310,7 +316,8 @@ function calcVel(){
 function showVel(){
     calcVel();
     const div = document.querySelector('#left_info');
-    div.innerHTML = `acc: ${Math.round(acc)}%, wpm: ${Math.round(wpm)}`;
+    div.innerHTML = `acc: ${Math.round(acc)}%</br> wpm: ${Math.round(wpm)}`;
+    div.innerHTML += `</br>Modo: ${mode}`;
 
 }
 
@@ -320,18 +327,21 @@ function results(valid) {
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     const div = document.querySelector('#results');
-    div.innerHTML = `Resultados`;
+    div.innerHTML = `Resultados</br>`;
     if (valid === false) {
-        div.innerHTML += `</br> <span style="font-size: 35px; color: red;">Esta partida no es válida</span>`;
+        div.innerHTML += `<span style="font-size: 20px; color: red;">Esta partida no es válida</span>`;
     }
-    div.innerHTML += `</br> <span style="font-size: 75px;"> wpm: ${wpm}</span>`;
-    div.innerHTML += `</br>acc: ${acc}%`;
+    div.innerHTML += `<span style="font-size: 30px;"> wpm: ${wpm}  </span>`;
+    div.innerHTML += `<span style="font-size: 30px;">acc: ${acc}%</span>`;
     div.innerHTML += `</br><button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`
+    div.innerHTML += `<canvas id="histo" width="100%" height="30%" ></canvas>`
+    crearTabla(wpm_list, acc_list, wpm_list.length);
     div.style.display = 'block';
     console.log("resultados")
 }
 
 
+// 
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -393,8 +403,10 @@ function postResults() {
                 fingers: sent_fingers
             })
         })
-        .then(response => response.json())
-        .then(getSessions(results, true))
+        //.then(response => response.json())
+        .then(function(response) {
+            console.log(response)
+            getSessions(results, true)})
         .catch(error => {
             console.log(error);
         });
