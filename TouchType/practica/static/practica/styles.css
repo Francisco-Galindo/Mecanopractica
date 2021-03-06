@@ -18,7 +18,7 @@ body {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: var(--background);
+    background-color: var(--highlight);
     border: 1px solid var(--text);
     padding: 5px;
     border-radius: 10px;

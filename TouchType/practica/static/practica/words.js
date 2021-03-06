@@ -176,6 +176,7 @@ function checkCorrectWord(mark) {
     if (first_letter === 1) {
         first_letter = 0;
     }
+    
     const last_letter = searchSpan("unwritten space", -1, "index", "first");
     if ((mark === true)) {
         spans[last_letter + 1].className = "written space";
