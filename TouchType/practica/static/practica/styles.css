@@ -19,6 +19,9 @@ body {
     display: none;
     position: absolute;
     background-color: var(--background);
+    border: 1px solid var(--text);
+    padding: 5px;
+    border-radius: 10px;
     z-index: 1;
 }
 
@@ -29,7 +32,9 @@ body {
 
 .show {display:block;}
 
-.dropdown-content button:hover {background-color: #ddd}
+.dropdown-content button:hover {
+    background-color: #ddd;
+}
 
 .incorrect{
     color: var(--error);
@@ -97,6 +102,7 @@ td, th, tr {
 #bar {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(3vh, 3vh);
     grid-column: 2/-2;  
     grid-row: 1/2; 
 }
@@ -113,9 +119,8 @@ td, th, tr {
 }
 
 #main_grid {
-    grid-auto-rows: minmax(450px, 450px);
+    grid-auto-rows: minmax(75vh, 75vh);
     position: absolute;
-
 }
 
 #left {
@@ -127,6 +132,7 @@ td, th, tr {
     font-size: 13px;
     grid-column: 4/10;  
     grid-row: 2/-1;  
+    overflow-y: hidden;
 }
 
 #right {

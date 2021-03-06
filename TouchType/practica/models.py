@@ -17,12 +17,13 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username}"
 
-class Easy(models.Model):
+class Substring(models.Model):
     substring = models.CharField(max_length=33)
     weight = models.FloatField()
+    numero = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"{self.substring}"
+        return f"{self.substring}, hola"
 
     def serialize(self):
         return {
@@ -68,6 +69,13 @@ class Text(models.Model):
             "year": self.year,
             "text": self.text
         }
+
+class Concept(models.Model):
+    mode = models.ForeignKey("Text_Mode", on_delete=models.PROTECT, related_name="concepts_in_mode", null=False, default=1)
+    text = models.TextField()
+
+    def __str__(self):
+        return f"{self.text}"
 
 class Session(models.Model):
     user = models.ForeignKey("User", on_delete=models.DO_NOTHING, related_name="players_that_played")

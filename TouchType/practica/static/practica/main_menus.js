@@ -26,14 +26,14 @@ function crearTabla(lista_de_wpm, lista_de_acc, j)
         data: {
             labels: lista_labels,
             datasets: [{
-                label: "Velocidads",
+                label: "Velocidad (WPM)",
                 data: lista_de_wpm,
                 fill: false,
                 backgroundColor: 'rgba(0, 255, 0, 0.1)',
                 borderColor: 'rgba(0, 255, 0, 0.1)'   
             },
             {
-                label: "Precisión",
+                label: "Precisión (%)",
                 data: lista_de_acc,
                 fill: false,
                 backgroundColor: 'rgba(255, 0, 0, 0.1)',

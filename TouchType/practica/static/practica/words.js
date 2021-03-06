@@ -22,8 +22,10 @@ var finger_letters = [['q', 'a', 'á', 'z', '1', '!'],
 var wpm_list = [];
 var acc_list = [];
 var spans = []
+var loop;
 
 document.addEventListener('DOMContentLoaded', page());
+
 
 
 // Inicializando juego
@@ -46,28 +48,35 @@ function page() {
 
     fetchWords(mode);
 
-    loop = setInterval(function(){
-        if (playing === true) {
-            timer += 0.5;
-            playing_timer -= 0.5;
-            console.log(playing_timer)
-            if (timer === 60 || playing_timer <= 0) {
-                playing = false;
-                results();
-                clearInterval(loop);
-            }
-            showVel();
-            //console.log(correct_spaces, timer, raw_wpm, acc, playing_timer);
-        } else if (playing === false && timer > 0){
-            postResults();
-            clearInterval(loop); 
-   
-        }
-    }, 500)
+    loop = setInterval(actualizarJuego, 500)
 
     document.querySelector('#results').style.display = 'none';
     document.querySelector('#text').style.display = 'block';
     document.querySelector('#form').style.display = 'block';
+}
+
+function actualizarJuego()
+{
+    if (playing === true) {
+        timer += 0.5;
+        playing_timer -= 0.5;
+        if (timer === 60 || playing_timer <= 0) {
+            playing = false;
+            results(false);
+            stopGame();
+        }
+        showVel();
+    } else if (playing === false && timer > 0){
+        stopGame(); 
+        console.log(timer)
+        postResults();
+
+    }
+}
+
+function stopGame() {
+    clearInterval(loop);
+    console.log("a");
 }
 
 function refreshPage(){
@@ -84,11 +93,22 @@ function fetchWords(words) {
         const div = document.querySelector('#text');
         div.innerHTML = "";
         words.forEach(function(word) {
-            const letters = JSON.stringify(word.word);
-            const n = letters.length;
-            for(let i = 1; i < n-1; i++) {
+            let cortar = true
+            let letters = JSON.stringify(word.word);
+
+            if (letters === undefined) {
+                cortar = false
+                letters = JSON.parse(word).word;
+            }
+            let n = letters.length;
+            let i = 1
+            if (cortar === false) {
+                i = 0;
+                n += 1;
+            }
+            for(let j = i; j < n-1; j++) {
                 const letter = document.createElement("span");
-                letter.innerHTML = `${letters.charAt(i)}`
+                letter.innerHTML = `${letters.charAt(j)}`
                 letter.classList.add("unwritten");
                 div.append(letter);
             }
@@ -268,7 +288,7 @@ function checkKeyPresses(key) {
 //Se ocupa de tomar la decision de llamar la función correspondiente dependiendo de si fue presionado el Backspace u otra tecla
 function keyPressed(event) {
     const key = event.key;
-    if (!(event.ctrlKey || event.shiftKey || event.altKey || event.isComposing || key === "Dead" || key === "OS")) {
+    if (!(event.ctrlKey || key === "Shift" || event.altKey || event.isComposing || key === "Dead" || key === "OS")) {
         playing = true;
         playing_timer = 15;
 
@@ -327,17 +347,16 @@ function results(valid) {
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     const div = document.querySelector('#results');
-    div.innerHTML = `Resultados</br>`;
+    div.innerHTML = `<span style="font-size: 30px;">Resultados</span></br>`;
     if (valid === false) {
-        div.innerHTML += `<span style="font-size: 20px; color: red;">Esta partida no es válida</span>`;
+        div.innerHTML += `<span style="font-size: 15px; color: red;">Esta partida no es válida, porque tu presisión fue menor al 75%</span></br>`;
     }
-    div.innerHTML += `<span style="font-size: 30px;"> wpm: ${wpm}  </span>`;
-    div.innerHTML += `<span style="font-size: 30px;">acc: ${acc}%</span>`;
-    div.innerHTML += `</br><button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`
-    div.innerHTML += `<canvas id="histo" width="100%" height="30%" ></canvas>`
+    div.innerHTML += `<span style="font-size: 20px;"> wpm: ${wpm}  </span>`;
+    div.innerHTML += `<span style="font-size: 20px;">acc: ${acc}%</span>`;
+    div.innerHTML += `<canvas id="histo" width="100%" height="30%" ></canvas>`;
+    div.innerHTML += `<button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`;
     crearTabla(wpm_list, acc_list, wpm_list.length);
     div.style.display = 'block';
-    console.log("resultados")
 }
 
 
@@ -362,7 +381,6 @@ function getSessions(func, value) {
     fetch(`/sessions/${mode}/`)
     .then(response => response.json())
     .then(sessions => {
-        console.log(sessions);
         const div = document.querySelector('#left');
 
         div.innerHTML = `<h6>Tablero modo ${mode}</h6>`;
@@ -373,7 +391,7 @@ function getSessions(func, value) {
             table.innerHTML += `<tr><td>${JSON.parse(top).user}</td><td>${JSON.parse(top).wpm}</td><td>${JSON.parse(top).acc}%</td></tr>`;
         })
         div.append(table);
-        console.log("sesiones")
+
         func(value)
     });
 }
@@ -403,7 +421,6 @@ function postResults() {
                 fingers: sent_fingers
             })
         })
-        //.then(response => response.json())
         .then(function(response) {
             console.log(response)
             getSessions(results, true)})

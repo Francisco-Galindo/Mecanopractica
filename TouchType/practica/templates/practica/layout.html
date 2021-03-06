@@ -33,9 +33,12 @@
                     <div  class="boton" id="settings_button" onclick="dropdown()" style="grid-column: -4; grid-row: 1; cursor: pointer;">
                         <img src="{% static 'practica/media/settings.svg' %}" alt="Opciones"/>
                         <div id="modes" class="dropdown-content">
-                            <p style="padding: 15px;">Modos de Juego</p>
+                            <p style="padding: 10px;">Modos de Juego</p>
+
                             {% for mode in modes %}
-                                <button name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="btn btn-dark dropdown-button">{{mode}}</button></br>
+                                <div style="padding: 5px;">
+                                    <button name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="btn btn-dark dropdown-button">{{mode}}</button>
+                                </div>
                             {% endfor %}
                         </div>
                     </div>
