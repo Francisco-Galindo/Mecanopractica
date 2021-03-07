@@ -66,7 +66,7 @@ function actualizarJuego()
             stopGame();
         }
         showVel();
-    } else if (playing === false && timer > 0){
+    } else if (playing === false && timer > 0) {
         stopGame(); 
         console.log(timer)
         postResults();
@@ -74,14 +74,17 @@ function actualizarJuego()
     }
 }
 
+
 function stopGame() {
     clearInterval(loop);
     console.log("a");
 }
 
+
 function refreshPage(){
     window.location.reload();
 } 
+
 
 // Haciendo fetch de las palabras que aparecerán en el juego
 function fetchWords(words) {
@@ -132,30 +135,33 @@ function fetchWords(words) {
     });
 }
 
+
 // Buscar alguno de los spans que se requiera usar. El primer parámetro permite saber cuál es la clase de ese span, el segundo es el desfase que se quiere tener, el tercero es para elegir si se quiere obtener el índice del elemento o el elemento en cuestión, por último se elige si se quiere obtener el primer o el último elemento con las características elegidas.
-function searchSpan(span_class, offset, index_or_element, first_last) {
+function searchSpan(span_class_one, span_class_two, offset, index_or_element, first_last) {
 
-    const all_leters = spans.length - 1;
+    if (span_class_two === undefined) {
+        span_class_two = span_class_one;
+    }
+    const all_leters = spans.length;
 
-    let i = 0;
+    let i;
     if (first_last === "first") {
-        while (i < all_leters && spans[i].className != span_class)  {
+        i = 0;
+        while (i < all_leters && !(spans[i].classList.contains(span_class_one) && spans[i].classList.contains(span_class_two)))  {
             i++;
         }
     } else {
-        for (let j = 0; j < all_leters; j++)
-        {
-            if (spans[j].className == span_class) {
-                i = j;
-            }
+        i = all_leters-1;
+        while (i >= 0 && !(spans[i].classList.contains(span_class_one) && spans[i].classList.contains(span_class_two)))  {
+            i--;
         }
     }
         
-    var index;
+    let index;
     index = i + offset;
     if (index < 0) {
         index = 0;
-    } else if (index >= all_leters) {
+    } else if (index >= all_leters || index < 0) {
         return null;
     }
 
@@ -172,12 +178,14 @@ function checkCorrectWord(mark) {
 
     var word = [];
 
-    var first_letter = searchSpan("written space", 1, "index", "last");
+    var first_letter = searchSpan("written", "space", 1, "index", "last");
     if (first_letter === 1) {
         first_letter = 0;
     }
+
+    const last_letter = searchSpan("unwritten", "space", -1, "index", "first");
+
     
-    const last_letter = searchSpan("unwritten space", -1, "index", "first");
     if ((mark === true)) {
         spans[last_letter + 1].className = "written space";
     }
@@ -222,23 +230,17 @@ function checkWhatFinger(key, finger_array) {
 
 // Función que borra la última letra que 
 function deleteKey() {
-    const key_to_delete = searchSpan("unwritten", -1, "element", "first"); 
-    const previous_key_to_delete = searchSpan("unwritten", -2, "element", "first");
+    const key_to_delete = searchSpan("written", undefined, 0, "index", "last"); 
+
 
     // Cambiar la última letra escrita a no escrita
-    if (key_to_delete.className !== "written space" && key_to_delete.className !== "unwritten space") {
-        key_to_delete.className = "unwritten";
-
-    } else if (key_to_delete.className === "unwritten space"){
-
-        // Para cuando se borra la última letra de una palabra
-        if (previous_key_to_delete.className === "extra-letter") {
-            // Si se trata de una letra extra (amarilla)
+    if (!(spans[key_to_delete].innerHTML === " ")) {
+        if (spans[key_to_delete].classList.contains("extra-letter")) {
             var text = document.querySelector('#text');
-            const previous_other_key_index = searchSpan("unwritten", -2, "index", "first");
-            text.removeChild(text.childNodes[previous_other_key_index]);
+            text.removeChild(text.childNodes[key_to_delete]);
+
         } else {
-        previous_key_to_delete.className = "unwritten";
+            spans[key_to_delete].className = "unwritten";
         }
     }
 }
@@ -247,37 +249,34 @@ function deleteKey() {
 function checkKeyPresses(key) {
 
     // Obtener el span con el cual comparar lo que ha sido tecleado
-    const other_key = searchSpan("unwritten", 0, "element", "first");
+    const other_key = searchSpan("unwritten", undefined, 0, "index", "first");
     if (other_key !== null) {
-        const previous_other_key = searchSpan("unwritten", -1, "element", "first");
-
-        
-        if (previous_other_key.innerHTML === " " && previous_other_key.className === "unwritten space") {
-            const previous_other_key_index = searchSpan("unwritten", -1, "index", "first");
+        if (spans[other_key].className === "unwritten space") {
             var text = document.querySelector('#text');
             var letter = document.createElement("span");
             letter.innerHTML = `<span>${key}</span>`;
             letter.classList.add("extra-letter");
+            letter.classList.add("written");
 
-            text.insertBefore(letter, text.childNodes[previous_other_key_index]);
+            text.insertBefore(letter, text.childNodes[other_key]);
             incorrect_presses ++;
         }
         // Si coincide el contenido del span con la tecla oprimida, marcar el span como correcto
         else {
-            var index_finger = checkWhatFinger(other_key.innerHTML, finger_letters);
-            if (key === other_key.innerHTML) {
-                other_key.className = "written correct";
+            var index_finger = checkWhatFinger(spans[other_key].innerHTML, finger_letters);
+            if (key === spans[other_key].innerHTML) {
+                spans[other_key].className = "written correct";
                 correct_presses ++;
                 fingers[2*index_finger] ++;
             } else {
-                other_key.className = "written incorrect";
+                spans[other_key].className = "written incorrect";
                 incorrect_presses ++;
                 fingers[2*index_finger + 1] ++;
             }
         }
     }
     // Haciendo un chequeo de la palabra automaticamente si se trata de la ultima palabra del juego 
-    if (searchSpan("unwritten", 1, "element", "first") === null && checkCorrectWord(false)) {
+    if (searchSpan("unwritten", undefined, 1, "element", "first") === null && checkCorrectWord(false)) {
         checkCorrectWord(true);
         playing = false;    
         terminado = 1;
@@ -293,8 +292,8 @@ function keyPressed(event) {
         playing = true;
         playing_timer = 15;
 
-        var cursor = searchSpan("unwritten", 0, "index", "first");
-        var cursor_minus = searchSpan("unwritten", -1, "index", "first");
+        var cursor = searchSpan("unwritten", undefined, 0, "index", "first");
+        var cursor_minus = searchSpan("unwritten", undefined, -1, "index", "first");
         if (spans[cursor_minus].className === "unwritten space") {
             cursor --;
         }
@@ -306,17 +305,19 @@ function keyPressed(event) {
         } else if (key === " ") {
             var form = document.querySelector("#form")
             form.value = ""
-            if(!checkCorrectWord(true) && searchSpan("unwritten", 0, "element", "first") === null) {
+            if(!checkCorrectWord(true) && searchSpan("unwritten", undefined, 0, "element", "first") === null) {
                 playing = false;
                 terminado = 1;
             }
             total_presses ++;
+
         } else {
             checkKeyPresses(key);
             total_presses ++;
         }
-        cursor = searchSpan("unwritten", 0, "index", "first");
-        cursor_minus = searchSpan("unwritten", -1, "index", "first");
+
+        cursor = searchSpan("unwritten", undefined, 0, "index", "first");
+        cursor_minus = searchSpan("unwritten", undefined, -1, "index", "first");
         if (spans[cursor_minus].className === "unwritten space") {
             cursor --;
         }
@@ -325,6 +326,7 @@ function keyPressed(event) {
         }
     }  
 }
+
 
 // Calculando la velocidad y precisión de escritura, añadiendo los resultados a la lista que será usada en el histograma al final de una partida
 function calcVel(){
