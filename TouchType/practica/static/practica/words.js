@@ -9,6 +9,7 @@ var timer = 0;
 var acc;
 var wpm;
 var terminado;
+var space_pressed;
 var fingers = [];
 var finger_letters = [['q', 'a', 'á', 'z', '1', '!'], 
                         ['w', 's', 'x', '2', '\"'], 
@@ -38,6 +39,7 @@ function page() {
     playing_timer = 0;
     timer = 0;
     terminado = 0;
+    space_pressed = 0;
     fingers = [];
     fingers.length = 16;
     for (let i=0; i<16; ++i) fingers[i] = 0;
@@ -184,6 +186,7 @@ function checkCorrectWord(mark) {
     }
 
     const last_letter = searchSpan("unwritten", "space", -1, "index", "first");
+    console.log(first_letter, last_letter);
 
     
     if ((mark === true)) {
@@ -216,9 +219,20 @@ function checkCorrectWord(mark) {
     return is_correct;
 }
 
+function deleteFirstWrittenWord() {
+    var text = document.querySelector('#text');
+    const first_space = searchSpan("space", undefined, 0, "index", "first");
+    console.log(first_space);
+
+    for (let i = 0; i <= first_space; i++) {
+        text.removeChild(text.childNodes[0]);
+    }
+
+}
+
 // Esta pequeña función se encarga de identificar a qué dedo corresp
 function checkWhatFinger(key, finger_array) {
-    var which_finger = -1;
+    let which_finger = -1;
     finger_array.forEach(function(finger) {
         if (finger.includes(key)) {
             //console.log(finger);
@@ -305,9 +319,14 @@ function keyPressed(event) {
         } else if (key === " ") {
             var form = document.querySelector("#form")
             form.value = ""
+            space_pressed ++;
+
             if(!checkCorrectWord(true) && searchSpan("unwritten", undefined, 0, "element", "first") === null) {
                 playing = false;
                 terminado = 1;
+            }
+            if (space_pressed > 1) {
+                deleteFirstWrittenWord();
             }
             total_presses ++;
 
