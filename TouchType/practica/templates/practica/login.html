@@ -3,11 +3,11 @@
 {% block menu_title %}Inicio de sesión{% endblock %}
 
 {% block left_block %}
-    <div>xdxdxdxdxd</div>
+<div class="main" id="left" style="display: none;"></div>
 {% endblock %}
 
 {% block main_block %}
-    <div>
+    <div class="main" id="center" style="width: 95vw;">
         <div style="text-align: center;">Inicia sesión</div>
         <form action="{% url 'login'%}" method="post">
             {% csrf_token %}
@@ -23,8 +23,20 @@
             <button type="submit" class="btn btn-outline-primary btn-sm">Iniciar sesión</button>
         </form>
     </div>
+    {% if warning %}
+        <br/>
+        <div class="alert alert-danger" role="alert">
+            {{warning}}
+        </div>
+    {% endif%}
+    {% if message %}
+        <br/>
+        <div class="alert alert-success" role="alert">
+            {{message}}
+        </div>
+    {% endif%}
 {% endblock %}
 
 {% block right_block %}
-    <div>Consejo: </div>
+<div class="main" id="right" style="display: none;"></div>
 {% endblock %}

@@ -4,30 +4,40 @@
 {% block menu_title %}Practica{% endblock %}
 
 {% block left_block %}
+<div class="main" id="left">
     {% if user.is_authenticated %}
         <div>Bienvenido, <strong>{{request.user}}</strong></div>
         </br>
         <div>Practicando: </div>
-        <div style="font-size: 15px;">{{finger}}</div>
+        <div style="font-size: 1.5vw;">{{finger}}</div>
         </br></br>
         <div id="left_info"></div>
     {% endif %}
+</div>
 {% endblock %}
 
 {% block main_block %}
-    {% if user.is_authenticated %}
-        <div id="text" style="font-size: 25px;"></div>
-        <div id="form" style="position: absolute;"><input value="" style="background-color:  #2e323d; color: #2e323d"class="form-control form-control-lg" type="text" autofocus onkeydown="keyPressed(event)"  style="position: relative; vertical-align: bottom;"></div>
-        <div id="results" style="font-size: 50px; text-align: center;"></div>
-    {% else %}
-        <div style="font-size: 30px;">Inicia sesión para poder practicar</div>
-    {% endif %}
+    <div class="main" id="center">
+        {% if user.is_authenticated %}
+            <div id="text"></div>
+            
+            <form id="form">
+                <input value="" class="form-control form-control-lg input" type="text" autofocus onkeydown="keyPressed(event)">
+            </form>
+
+            <div id="results" style="white-space: pre; text-align: center;"></div>
+        {% else %}
+            <div style="font-size: 30px;">Inicia sesión para poder practicar</div>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block right_block %}
-    <h4>Consejo: </h4>
-    <div style="max-height: 100%;">
-        <p>{{ tip }}</p>
+    <div class="main" id="right">
+        <strong>Consejo:</strong>
+        <div>
+            <p>{{ tip }}</p>
+        </div>
     </div>
 {% endblock %}
 

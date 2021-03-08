@@ -1,11 +1,10 @@
 {% extends "practica/layout.html" %}
 {% block menu_title %}Registro de usuario{% endblock %}
 {% block left_block %}
-    <div>xdxdxdxdxd</div>
 {% endblock %}
 
 {% block main_block %}
-    <div>
+    <div class="main" id="center" style="width: 95vw;">
         <div style="text-align: center;">Registra a un nuevo usuario</div>
         <form action="{% url 'register'%}" method="post">-
             {% csrf_token %}
@@ -38,5 +37,4 @@
 {% endblock %}
 
 {% block right_block %}
-    <div>xdxdxdxdxd</div>
 {% endblock %}

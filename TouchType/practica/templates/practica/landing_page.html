@@ -1,0 +1,57 @@
+{% extends "practica/layout.html" %}
+{% load static %}
+
+{% block menu_title %}Bienvenido{% endblock %}
+
+{% block left_block %}
+{% endblock %}
+
+{% block main_block %}
+<div class="main" id="center" style="width: 95vw;">
+    {% if user.is_authenticated %}
+    <a class="btn btn-primary" href="{% url 'game_page' %}" role="button">Ir a jugar</a> 
+    {% else %}  
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Dropdown button
+            </button>
+            <div class="dropdown-menu" >
+                <form class="px-4 py-3" action="{% url 'login'%}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="usuario">Nombre de usuario</label>
+                        <input name="username" required="required" class="form-control form-control-sm" type="text" id="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password1">Contraseña</label>
+                        <input name="password" required="required" type="password" class="form-control form-control-sm" id="password1">
+                    </div>
+                    </br>
+                    <button type="submit" class="btn btn-primary">Ingresar</button>
+                </form>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'register' %}">¿Eres nuevo? Crea un usuario</a>
+            </div> 
+    {% endif %}
+    </div>
+        {% if warning %}
+            <br/>
+            <div class="alert alert-danger" role="alert">
+                {{warning}}
+            </div>
+            {% endif%}
+            {% if message %}
+            <br/>
+            <div class="alert alert-success" role="alert">
+                {{message}}
+            </div>
+        {% endif%}
+    </div>
+{% endblock %}
+
+{% block right_block %}
+{% endblock %}
+
+{% block script1 %}
+    <script src="{% static 'practica/landing_page.js' %}"></script>
+{% endblock %}

@@ -10,7 +10,7 @@ function dropdown() {
 function changeMode(mode) {
     localStorage.setItem('mode', mode);
     console.log(localStorage.getItem('mode'));
-    page();
+    refreshPage();
 }
 
 function crearTabla(lista_de_wpm, lista_de_acc, j)

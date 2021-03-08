@@ -2,7 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('juego/', views.main_page, name="main_page"),
+    path('', views.main_page, name="main_page"),
+    path('juego/', views.game_page, name="game_page"),
     path('practica/<str:mode>/', views.words, name="practice"),
     path('sessions/<str:mode>/', views.sessions, name="session"),
     path('register/', views.register_view, name="register"),

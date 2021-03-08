@@ -15,13 +15,22 @@ from datetime import datetime
 from .util import *
 from .models import *
 
-
 def main_page(request):
+    return render(request, "practica/landing_page.html")
+
+
+def game_page(request):
     tips = Tip.objects.all()
     tip_id = random.randint(1, tips.count())
     tip = Tip.objects.get(pk=tip_id)
 
-    modes = Text_Mode.objects.all()
+    modes = []
+    glosarios = []
+    for mode in Text_Mode.objects.all():
+        if "Glosario" in getattr(mode, "mode"):
+            glosarios.append(mode)
+        else:
+            modes.append(mode)
 
 
     worst_finger = "No hay suficiente información"
@@ -66,11 +75,16 @@ def main_page(request):
             worst_finger = "Meñique derecho"
 
 
-    return render(request, 'practica/practice.html', {
-        "tip": tip,
-        "finger": worst_finger,
-        "modes": modes
-    })
+        return render(request, 'practica/practice.html', {
+            "tip": tip,
+            "finger": worst_finger,
+            "modes": modes,
+            "glosarios": glosarios
+        })
+
+    else:
+        return HttpResponseRedirect(reverse("main_page"))
+
 
 def login_view(request):
     #Cuando la forma sea enviada

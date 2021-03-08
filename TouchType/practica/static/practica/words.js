@@ -25,12 +25,7 @@ var acc_list = [];
 var spans = []
 var loop;
 
-document.addEventListener('DOMContentLoaded', page());
-
-
-
-// Inicializando juego
-function page() {
+document.addEventListener('DOMContentLoaded', function() {
     total_presses = 0;
     correct_presses = 0;
     incorrect_presses = 0;
@@ -52,10 +47,13 @@ function page() {
 
     loop = setInterval(actualizarJuego, 500)
 
-    document.querySelector('#results').style.display = 'none';
-    document.querySelector('#text').style.display = 'block';
-    document.querySelector('#form').style.display = 'block';
-}
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('text').style.display = 'block';
+    document.getElementById('form').style.display = 'block';
+    document.getElementById("form").reset();
+});
+
+
 
 function actualizarJuego()
 {
@@ -317,8 +315,6 @@ function keyPressed(event) {
         if (key == "Backspace") {
             deleteKey();
         } else if (key === " ") {
-            var form = document.querySelector("#form")
-            form.value = ""
             space_pressed ++;
 
             if(!checkCorrectWord(true) && searchSpan("unwritten", undefined, 0, "element", "first") === null) {
@@ -329,6 +325,7 @@ function keyPressed(event) {
                 deleteFirstWrittenWord();
             }
             total_presses ++;
+            document.getElementById("form").reset();
 
         } else {
             checkKeyPresses(key);
@@ -369,13 +366,13 @@ function results(valid) {
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     const div = document.querySelector('#results');
-    div.innerHTML = `<span style="font-size: 30px;">Resultados</span></br>`;
+    div.innerHTML = `<span style="font-size: 2vw;">Resultados</span>\n`;
     if (valid === false) {
-        div.innerHTML += `<span style="font-size: 15px; color: red;">Esta partida no es válida, porque tu presisión fue menor al 75%</span></br>`;
+        div.innerHTML += `<span style="font-size: 1.5vw; color: red;">Esta partida no es válida,\n porque tu presisión fue menor al 75%</span>\n`;
     }
-    div.innerHTML += `<span style="font-size: 20px;"> wpm: ${wpm}  </span>`;
-    div.innerHTML += `<span style="font-size: 20px;">acc: ${acc}%</span>`;
-    div.innerHTML += `<canvas id="histo" width="100%" height="30%" ></canvas>`;
+    div.innerHTML += `<span style="font-size: 1.5vw;"> wpm: ${wpm}  </span>`;
+    div.innerHTML += `<span style="font-size: 1.5vw;">acc: ${acc}%</span>\n\n\n`;
+    div.innerHTML += `<canvas id="histo" width="100%" height="30%" ></canvas>\n\n`;
     div.innerHTML += `<button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`;
     crearTabla(wpm_list, acc_list, wpm_list.length);
     div.style.display = 'block';

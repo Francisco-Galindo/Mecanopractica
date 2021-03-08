@@ -66,23 +66,34 @@ body {
 
 #text {
     color: var(--background);
+    font-size: 2vw;
 }
 
-#input{
+#form {
+    /*margin-left: 5vw;
+    margin-left: 5vw;*/
+    width: 50vw;
+    margin-bottom: 0vw;
+    position: absolute;
+    bottom: 15vh;
+}
+
+.input > input {
+
     background-color: var(--highlight);
     border-color: var(--highlight);
-    color: var(--highlight);
+    color: var(--text);
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    width: 100%;
-    grid-gap: 1em;
-    padding: 20px;
+.block {
+    margin-top: 2.5vh;
+    margin-left: 2.5vw;
+    margin-right: 2.5vw;
+    display: flex;
 }
 
-.grid > div {
+.block > div {
+    width: 95vw;
     background-color: var(--highlight);
     border-radius: 10px;
     padding: 20px;
@@ -100,11 +111,16 @@ td, th, tr {
 }
 
 #bar {
+
+    font-size: 1vw;
     display: grid;
+    justify-content: center;
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: minmax(3vh, 3vh);
-    grid-column: 2/-2;  
-    grid-row: 1/2; 
+    height: 7.5vh;
+}
+
+#bar > div {
+    font-size: 2vw;
 }
 
 #botones{
@@ -113,38 +129,45 @@ td, th, tr {
     fill: var(--text);
 }
 
-.hij_botones > img:hover{
-    height: 17pt;
-    width: 17pt;
+.boton > img:hover{
+    height: 3.2vh;
+    width: 3.2vw;
 }
 
-#main_grid {
-    grid-auto-rows: minmax(75vh, 75vh);
-    position: absolute;
+.boton > img{
+    height: 3vh;
+    width: 3vw;
+}
+
+#main_grid > div {
+    height: 82.5vh;
 }
 
 #left {
-    grid-column: 2/4;  
-    grid-row: 2/-1; 
+    font-size: 1.5vw;
+    width: 20vw;
+    margin-right: 2.5vw;
 }
 
 #center {
-    font-size: 13px;
-    grid-column: 4/10;  
-    grid-row: 2/-1;  
     overflow-y: hidden;
+    width: 60vw;
 }
 
 #right {
-    grid-column: 10/12;  
-    grid-row: 2/-1; 
+    font-size: 1.5vw;
+    width: 20vw;
+    margin-left: 2.5vw;
 }
 
 .lower {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     position: absolute;
+    font-size: 0.5vw;
+    padding: 0.5vh;
+    height: 2.5vh;
+    margin-top: 2.5vh;
     width: 100%;
-    bottom: 0;
     background-color: var(--highlight);
 }
