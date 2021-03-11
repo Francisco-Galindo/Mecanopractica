@@ -33,26 +33,13 @@
                             <img src="{% static 'practica/media/enter.svg' %}" alt="Iniciar sesión"/>
                         </a>
                     {% endif %}
-                    <div style="grid-column: -4; grid-row: 1; cursor: pointer; height: 3vh; width: 3vw; vertical-align: middle;">
-                        <div class="btn-group boton" id="dropdown-modos">
+                    <div class="boton" style="grid-column: -4; grid-row: 1;">
+                        <div class="btn-group" id="dropdown-modos" style="height: 100%; width: 100%; padding: 0px;">
 
-                            <button type="button" class="btn btn-secondary" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" style="background-color: var(--highlight); border:0px solid var(--text); padding: 0px; height: 3vh;">
-                                <img style="height: 100%;" src="{% static 'practica/media/settings.svg' %}" alt="Registrarse"/>
+                            <button type="button" class="btn btn-secondary" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" style="background-color: rgba(0,0,0, 0); border:0px solid var(--text); padding: 0px;">
+                                <img style="" src="{% static 'practica/media/settings.svg' %}" alt="Registrarse"/>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" style="background-color: var(--highlight); border: 2px solid var(--text); color: var(--text);">
-                                <!--
-                                <div class="btn-group dropleft">
-                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 5px; width: 100%;">
-                                        Glosarios
-                                    </button>
-                                    <div class="dropdown-menu" style="background-color: darkgrey;">
-                                        {% for glosario in glosarios%}
-                                            <button name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
-                                        {% endfor %}                                    
-    
-                                    </div>
-                                </div>
-                                -->
                                 <div>Glosarios</div>
                                 {% for glosario in glosarios%}
                                     <button  style="color: var(--text);" name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>

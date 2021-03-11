@@ -134,7 +134,7 @@ td, th, tr {
     width: 3.2vw;
 }
 
-.boton > img{
+.boton > img, button > img{
     height: 3vh;
     width: 3vw;
 }

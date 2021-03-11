@@ -1,5 +1,5 @@
 if (!localStorage.getItem('mode')) {
-    localStorage.setItem('mode', '10000')
+    localStorage.setItem('mode', 'Fácil')
 }
 
 function dropdown() {

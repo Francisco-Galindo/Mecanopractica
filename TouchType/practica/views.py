@@ -248,9 +248,12 @@ def words(request, mode):
             )
             return JsonResponse([word.serialize() for word in words_to_send], safe=False)
             
-        elif 'Glosario' in mode:
+        elif 'Glosario' in mode or 'Texto' in mode:
             concept_mode = Text_Mode.objects.get(mode=mode)
-            text = random.choice(Concept.objects.filter(mode=concept_mode))
+            try:
+                text = random.choice(Concept.objects.filter(mode=concept_mode))
+            except:
+                text = random.choice(Text.objects.filter(mode=concept_mode))
             string = getattr(text, 'text')
             words = string.split(' ')
             words_to_send = []

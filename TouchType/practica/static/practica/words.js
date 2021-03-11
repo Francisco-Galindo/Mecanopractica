@@ -28,8 +28,11 @@ var loop;
 var velocidad = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
+    mode = localStorage.getItem('mode');
 
     drawFingerImage('hand-left', undefined);
+    mode_str = document.getElementById('modo');
+    mode_str.innerHTML = `Modo: ${mode}`;
 
     total_presses = 0;
     correct_presses = 0;
@@ -46,8 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
     wpm_list = [];
     acc_list = [];
 
-    mode = localStorage.getItem('mode');
-    console.log(mode)
 
     fetchWords(mode);
 
@@ -70,7 +71,7 @@ function actualizarJuego() {
     if (playing === true) {
         timer += (1/velocidad);
         playing_timer -= (1/velocidad);
-        if (timer === 60 || playing_timer <= 0) {
+        if (/*timer === 60 ||*/ playing_timer <= 0) {
             playing = false;
             results(false);
             stopGame();
