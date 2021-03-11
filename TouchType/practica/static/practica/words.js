@@ -18,7 +18,8 @@ var finger_letters = [['q', 'a', 'á', 'z', '1', '!'],
                         ['u', 'ú', 'j', 'm', '7', '/', 'y', 'h', 'n'], 
                         ['i', 'í', 'k', ',', '(', '8'], 
                         ['o', 'ó', 'l', '.', '9', ')'], 
-                        ['p', 'ñ', '-', '=', '0']];
+                        ['p', 'ñ', '-', '=', '0'],
+                        [' ']];
 
 var wpm_list = [];
 var acc_list = [];
@@ -26,6 +27,9 @@ var spans = []
 var loop;
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    drawFingerImage('hand-left', undefined);
+
     total_presses = 0;
     correct_presses = 0;
     incorrect_presses = 0;
@@ -42,24 +46,28 @@ document.addEventListener('DOMContentLoaded', function() {
     acc_list = [];
 
     mode = localStorage.getItem('mode');
+    console.log(mode)
 
     fetchWords(mode);
 
-    loop = setInterval(actualizarJuego, 500)
+
+
+    loop = setInterval(actualizarJuego, 1000)
 
     document.getElementById('results').style.display = 'none';
     document.getElementById('text').style.display = 'block';
     document.getElementById('form').style.display = 'block';
     document.getElementById("form").reset();
+
+
 });
 
 
 
-function actualizarJuego()
-{
+function actualizarJuego() {
     if (playing === true) {
-        timer += 0.5;
-        playing_timer -= 0.5;
+        timer += 1;
+        playing_timer -= 1;
         if (timer === 60 || playing_timer <= 0) {
             playing = false;
             results(false);
@@ -77,13 +85,7 @@ function actualizarJuego()
 
 function stopGame() {
     clearInterval(loop);
-    console.log("a");
 }
-
-
-function refreshPage(){
-    window.location.reload();
-} 
 
 
 // Haciendo fetch de las palabras que aparecerán en el juego
@@ -125,7 +127,9 @@ function fetchWords(words) {
     .then(function(){ 
         const div = document.querySelector('#text')
         spans = div.children
-        spans[0].style.borderLeft = "3px dotted #d5ced9"
+        spans[0].style.borderLeft = "0.3vw dotted #d5ced9"
+
+        drawNextFinger(spans);
 
     })
     .catch(error => {
@@ -157,8 +161,9 @@ function searchSpan(span_class_one, span_class_two, offset, index_or_element, fi
         }
     }
         
-    let index;
-    index = i + offset;
+    let index = i + offset;
+
+
     if (index < 0) {
         index = 0;
     } else if (index >= all_leters || index < 0) {
@@ -184,7 +189,6 @@ function checkCorrectWord(mark) {
     }
 
     const last_letter = searchSpan("unwritten", "space", -1, "index", "first");
-    console.log(first_letter, last_letter);
 
     
     if ((mark === true)) {
@@ -220,7 +224,6 @@ function checkCorrectWord(mark) {
 function deleteFirstWrittenWord() {
     var text = document.querySelector('#text');
     const first_space = searchSpan("space", undefined, 0, "index", "first");
-    console.log(first_space);
 
     for (let i = 0; i <= first_space; i++) {
         text.removeChild(text.childNodes[0]);
@@ -230,10 +233,15 @@ function deleteFirstWrittenWord() {
 
 // Esta pequeña función se encarga de identificar a qué dedo corresp
 function checkWhatFinger(key, finger_array) {
+
+    if (finger_array === undefined) {
+        finger_array = finger_letters;
+    }
+
     let which_finger = -1;
     finger_array.forEach(function(finger) {
         if (finger.includes(key)) {
-            //console.log(finger);
+
             which_finger = finger_array.indexOf(finger);
         }
     })
@@ -338,8 +346,10 @@ function keyPressed(event) {
             cursor --;
         }
         if (spans[cursor] !== undefined) {
-        spans[cursor].style.borderLeft = "3px dotted #d5ced9";
+        spans[cursor].style.borderLeft = "0.3vw dotted #d5ced9";
         }
+
+        drawNextFinger(spans);
     }  
 }
 
@@ -362,7 +372,7 @@ function showVel(){
 
 function results(valid) {
     playing = false;
-    console.log(acc_list, wpm_list);
+
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     const div = document.querySelector('#results');
@@ -371,11 +381,11 @@ function results(valid) {
         div.innerHTML += `<span style="font-size: 1.5vw; color: red;">Esta partida no es válida,\n porque tu presisión fue menor al 75%</span>\n`;
     }
     div.innerHTML += `<span style="font-size: 1.5vw;"> wpm: ${wpm}  </span>`;
-    div.innerHTML += `<span style="font-size: 1.5vw;">acc: ${acc}%</span>\n\n\n`;
-    div.innerHTML += `<canvas id="histo" width="100%" height="30%" ></canvas>\n\n`;
+    div.innerHTML += `<span style="font-size: 1.5vw;">acc: ${acc}%</span>\n`;
+    div.innerHTML += `<div id="chart"><canvas id="histo"></canvas></div>\n`;
     div.innerHTML += `<button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`;
-    crearTabla(wpm_list, acc_list, wpm_list.length);
     div.style.display = 'block';
+    crearTabla(wpm_list, acc_list, wpm_list.length);
 }
 
 

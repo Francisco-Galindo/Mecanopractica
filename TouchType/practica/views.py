@@ -8,10 +8,8 @@ from django.core import serializers
 import json
 import random
 import operator
-from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 
-#from .models import Group, User, Substring, Words_es, Text_Author, Text_Mode, Text, Session, Tip
 from .util import *
 from .models import *
 
@@ -37,43 +35,12 @@ def game_page(request):
     if request.user.is_authenticated:
         user = User.objects.get(username=request.user)
 
-        fingers = getattr(user, "fingers")
-        split_user = fingers.split(',')
-
-        # Obteniendo información sobre los dedos del jugador
-        fingers_int = []
-        for finger in split_user:
-            if finger != '':
-                fingers_int.append(int(finger))
-
-        fingers_added = []
-        # Sumando los tecleos correctos e incorrectos de cada dedo
-        for i in range(int(len(fingers_int)/2)):
-            try:
-                propor_correctas = fingers_int[2*i]/(fingers_int[2*i] + fingers_int[2*i+1])
-            except:
-                propor_correctas = 0
-            fingers_added.append(propor_correctas)
+        fingers = finger_list_to_ints(getattr(user, "fingers"))
+        fingers_added = fingers_proportions(fingers)
 
         worst_finger = fingers_added.index(min(fingers_added))
-
-        if worst_finger == 0:
-            worst_finger = "Meñique izquierdo"
-        elif worst_finger == 1:
-            worst_finger = "Anular izquierdo"
-        elif worst_finger == 2:
-            worst_finger = "Corazón izquierdo"
-        elif worst_finger == 3:
-            worst_finger = "Índice izquierdo"
-        elif worst_finger == 4:
-            worst_finger = "Índice derecho"
-        elif worst_finger == 5:
-            worst_finger = "Corazón derecho"
-        elif worst_finger == 6:
-            worst_finger = "Anular derecho"
-        elif worst_finger == 7:
-            worst_finger = "Meñique derecho"
-
+        worst_finger = get_worst_finger_string(worst_finger)
+    
 
         return render(request, 'practica/practice.html', {
             "tip": tip,
@@ -81,6 +48,25 @@ def game_page(request):
             "modes": modes,
             "glosarios": glosarios
         })
+
+    else:
+        return HttpResponseRedirect(reverse("main_page"))
+
+
+def user_page(request):
+    if request.user.is_authenticated:
+        modes = []
+        glosarios = []
+        for mode in Text_Mode.objects.all():
+            if "Glosario" in getattr(mode, "mode"):
+                glosarios.append(mode)
+            else:
+                modes.append(mode)
+        return render(request, 'practica/user_stats.html', {
+            "modes": modes,
+            "glosarios": glosarios
+        })
+
 
     else:
         return HttpResponseRedirect(reverse("main_page"))
@@ -99,7 +85,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse("main_page"))
-        # Si no sn validos, avisar de ello y volver a cargar la forma
+        # Si no son validos, avisar de ello y volver a cargar la forma
         else:
             return render(request, "practica/login.html", {
                 "warning": "Usuario o contraseña incorrectos, intenta de nuevo"
@@ -108,9 +94,11 @@ def login_view(request):
     else:
            return render(request, "practica/login.html")
 
+
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("main_page"))
+
 
 def register_view(request):
     if request.method == "POST":
@@ -180,23 +168,11 @@ def sessions(request, mode):
 
         # Obteniendo la información sobre las estadísticas de cada dedo, que nos llega como una cadena, convirtiéndolo a una lista de números para actualizar los valores, 
         # Finalmente regresamos al estado de cadena para ser guardado en la base de datos
-        sent_fingers = data.get("fingers")
-        split_sent = sent_fingers.split(',')
-        
-        fingers_adder = []
-        for finger in split_sent:
-            if finger != '':
-                fingers_adder.append(int(finger))
+        sent_fingers = finger_list_to_ints(data.get("fingers"))
 
-        user_fingers = getattr(user, "fingers")
-        split_user = user_fingers.split(',')
-
-        fingers_current = []
-        for finger in split_user:
-            if finger != '':
-                fingers_current.append(int(finger))
+        user_fingers = finger_list_to_ints(getattr(user, "fingers"))
         
-        fingers_new_int = list(map(operator.add, fingers_adder, fingers_current))
+        fingers_new_int = list(map(operator.add, sent_fingers, user_fingers))
 
         fingers_new = ''
         for number in fingers_new_int:
@@ -237,14 +213,10 @@ def words(request, mode):
 
 
             user = User.objects.get(username=request.user)
-            fingers = getattr(user, "fingers")
-            split_user = fingers.split(',')
 
-            # Obteniendo información sobre los dedos del jugador
-            fingers_int = []
-            for finger in split_user:
-                if finger != '':
-                    fingers_int.append(int(finger))
+            fingers = finger_list_to_ints(getattr(user, "fingers"))
+            fingers_added = fingers_proportions(fingers)
+            worst_finger = fingers_added.index(min(fingers_added))
 
             finger_letters = [['q', 'a', 'á', 'z', '1', '!'], 
                                 ['w', 's', 'x', '2', '\"'], 
@@ -254,16 +226,6 @@ def words(request, mode):
                                 ['i', 'í', 'k', ',', '(', '8'], 
                                 ['o', 'ó', 'l', '.', '9', ')'], 
                                 ['p', 'ñ', '-', '=', '0']]
-            fingers_added = []
-            # Sumando los tecleos correctos e incorrectos de cada dedo
-            for i in range(int(len(fingers_int)/2)):
-                try:
-                    propor_correctas = fingers_int[2*i]/(fingers_int[2*i] + fingers_int[2*i+1])
-                except:
-                    propor_correctas = 0
-                fingers_added.append(propor_correctas)
-
-            worst_finger = fingers_added.index(min(fingers_added))
                     
             weights = []
             for word in words:
@@ -275,7 +237,7 @@ def words(request, mode):
                     string = getattr(word, "substring")
                     for char in str.lower(string):
                         if char in finger_letters[worst_finger]:
-                            weight *= 1.5
+                            weight *= 2
 
                 weights.append(weight)
 
@@ -287,7 +249,8 @@ def words(request, mode):
             return JsonResponse([word.serialize() for word in words_to_send], safe=False)
             
         elif 'Glosario' in mode:
-            text = random.choice(Concept.objects.all())
+            concept_mode = Text_Mode.objects.get(mode=mode)
+            text = random.choice(Concept.objects.filter(mode=concept_mode))
             string = getattr(text, 'text')
             words = string.split(' ')
             words_to_send = []
@@ -298,3 +261,25 @@ def words(request, mode):
 
             return JsonResponse([json.dumps(word) for word in words_to_send], safe=False)
 
+
+def get_all_user_stats(request, mode):
+    if request.method == "GET" and request.user.is_authenticated:
+        user = User.objects.get(username=request.user)
+        fingers = finger_list_to_ints(getattr(user, "fingers"))
+        fingers_added = fingers_proportions(fingers)
+        worst_finger = fingers_added.index(min(fingers_added))
+        worst_finger = get_worst_finger_string(worst_finger)
+
+        actual_mode = Text_Mode.objects.get(mode=mode)
+        sessions = user.players_that_played.filter(mode=actual_mode)
+        json_sessions = []
+        for session in sessions:
+            json_session = json.dumps(convert_session_to_dict(session, mode), ensure_ascii=False)
+            json_sessions.append(json_session)
+
+        dict_to_send = {}
+        dict_to_send["sessions"] = json_sessions
+        dict_to_send["fingers"] = fingers_added
+        dict_to_send["worst_finger"] = worst_finger
+
+        return JsonResponse(json.dumps(dict_to_send, ensure_ascii=False), safe=False)

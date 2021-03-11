@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.main_page, name="main_page"),
+    path('usuario/', views.user_page, name="user_page"),
+    path('usuario/data/<str:mode>/', views.get_all_user_stats, name="all_user_stats"),
     path('juego/', views.game_page, name="game_page"),
     path('practica/<str:mode>/', views.words, name="practice"),
     path('sessions/<str:mode>/', views.sessions, name="session"),

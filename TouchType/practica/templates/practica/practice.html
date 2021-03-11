@@ -9,7 +9,7 @@
         <div>Bienvenido, <strong>{{request.user}}</strong></div>
         </br>
         <div>Practicando: </div>
-        <div style="font-size: 1.5vw;">{{finger}}</div>
+        <div id="hand-left" style="font-size: 1.5vw; width: 10vh;">{{finger}}</div>
         </br></br>
         <div id="left_info"></div>
     {% endif %}
@@ -22,10 +22,13 @@
             <div id="text"></div>
             
             <form id="form">
+                <div id="hand-center" style="display: flex; justify-content: center; height: 20vh;">
+                </div>
                 <input value="" class="form-control form-control-lg input" type="text" autofocus onkeydown="keyPressed(event)">
             </form>
 
-            <div id="results" style="white-space: pre; text-align: center;"></div>
+            <div id="results" style="white-space: pre; text-align: center;">
+            </div>
         {% else %}
             <div style="font-size: 30px;">Inicia sesión para poder practicar</div>
         {% endif %}
@@ -46,5 +49,5 @@
 {% endblock %}
 
 {% block script2 %}
-    <script src="{% static 'practica/main_menus.js' %}"></script>
+    <script src="{% static 'practica/words_util.js' %}"></script>
 {% endblock %}

@@ -111,8 +111,8 @@ td, th, tr {
 }
 
 #bar {
-
-    font-size: 1vw;
+    padding-left: 1vw;
+    padding-top: 1.25vh;
     display: grid;
     justify-content: center;
     grid-template-columns: repeat(3, 1fr);
@@ -120,7 +120,7 @@ td, th, tr {
 }
 
 #bar > div {
-    font-size: 2vw;
+    font-size: 3vh;
 }
 
 #botones{
@@ -137,6 +137,10 @@ td, th, tr {
 .boton > img{
     height: 3vh;
     width: 3vw;
+}
+
+.imagen-dedo-centro {
+    margin: auto;
 }
 
 #main_grid > div {
@@ -170,4 +174,10 @@ td, th, tr {
     margin-top: 2.5vh;
     width: 100%;
     background-color: var(--highlight);
+}
+
+#chart {
+    position: relative; 
+    width: 100%;
+    height: 40vh; 
 }
