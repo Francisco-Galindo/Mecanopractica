@@ -108,10 +108,10 @@ def register_view(request):
         # Asegurarse de que la confirmacion de contrasena es igual
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
-        group = request.POST["group"]
         try:
+            group = request.POST["group"]
             chosen_group = Group.objects.get(group = group)
-        except  ValueError:
+        except:
             chosen_group = 0
 
         if password != confirmation:

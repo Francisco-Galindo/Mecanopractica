@@ -13,7 +13,7 @@
     {% else %}  
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Dropdown button
+                Para jugar, debes iniciar sesión
             </button>
             <div class="dropdown-menu" >
                 <form class="px-4 py-3" action="{% url 'login'%}" method="post">
@@ -33,6 +33,7 @@
                 <a class="dropdown-item" href="{% url 'register' %}">¿Eres nuevo? Crea un usuario</a>
             </div> 
         </div>
+
     {% endif %}
     </div>
         {% if warning %}

@@ -25,6 +25,7 @@ var wpm_list = [];
 var acc_list = [];
 var spans = []
 var loop;
+var velocidad = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    loop = setInterval(actualizarJuego, 1000)
+    loop = setInterval(actualizarJuego, 1000/velocidad)
 
     document.getElementById('results').style.display = 'none';
     document.getElementById('text').style.display = 'block';
@@ -65,9 +66,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function actualizarJuego() {
+
     if (playing === true) {
-        timer += 1;
-        playing_timer -= 1;
+        timer += (1/velocidad);
+        playing_timer -= (1/velocidad);
         if (timer === 60 || playing_timer <= 0) {
             playing = false;
             results(false);

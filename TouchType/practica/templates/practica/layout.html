@@ -22,6 +22,9 @@
                         <a class="boton" href="{% url 'logout' %}" style="grid-column: -3; grid-row: 1;">
                             <img src="{% static 'practica/media/logout.svg' %}" alt="Cerrar sesión"/>
                         </a>
+                        <a class="boton" href="{% url 'user_page' %}" style="grid-column: -2; grid-row: 1;">
+                            <img src="{% static 'practica/media/user.svg' %}" alt="Registrarse"/>
+                        </a>
                     {% else %}
                         <a class="boton" href="{% url 'register' %}" style="grid-column: -2; grid-row: 1;">
                             <img src="{% static 'practica/media/register.svg' %}" alt="Registrarse"/>
@@ -30,30 +33,49 @@
                             <img src="{% static 'practica/media/enter.svg' %}" alt="Iniciar sesión"/>
                         </a>
                     {% endif %}
+                    <div style="grid-column: -4; grid-row: 1; cursor: pointer; height: 3vh; width: 3vw; vertical-align: middle;">
+                        <div class="btn-group boton" id="dropdown-modos">
+
+                            <button type="button" class="btn btn-secondary" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" style="background-color: var(--highlight); border:0px solid var(--text); padding: 0px; height: 3vh;">
+                                <img style="height: 100%;" src="{% static 'practica/media/settings.svg' %}" alt="Registrarse"/>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" style="background-color: var(--highlight); border: 2px solid var(--text); color: var(--text);">
+                                <!--
+                                <div class="btn-group dropleft">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 5px; width: 100%;">
+                                        Glosarios
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color: darkgrey;">
+                                        {% for glosario in glosarios%}
+                                            <button name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
+                                        {% endfor %}                                    
+    
+                                    </div>
+                                </div>
+                                -->
+                                <div>Glosarios</div>
+                                {% for glosario in glosarios%}
+                                    <button  style="color: var(--text);" name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
+                                {% endfor %} 
+                                <div>Otros modos</div>
+                                {% for mode in modes %}
+                                    <button style="color: var(--text);" name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="dropdown-item">{{mode}}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <!-- Dropdown menu links 
                     <div  class="boton" id="settings_button" onclick="dropdown()" style="grid-column: -4; grid-row: 1; cursor: pointer;">
                         <img src="{% static 'practica/media/settings.svg' %}" alt="Opciones"/>
                         <div id="modes" class="dropdown-content">
                             <p style="padding: 10px;">Modos de Juego</p>
-                            <div class="btn-group dropleft">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 5px; width: 100%;">
-                                    Glosarios
-                                </button>
-                                <div class="dropdown-menu" style="background-color: darkgrey;">
-                                    <!-- Dropdown menu links -->
-                                    {% for glosario in glosarios%}
-                                        <div>
-                                            <button name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="btn btn-dark dropdown-button">{{glosario}}</button>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% for mode in modes %}
-                                <div>
-                                    <button name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="btn btn-dark dropdown-button">{{mode}}</button>
-                                </div>
-                            {% endfor %}
+                            
+                            
                         </div>
                     </div>
+                    -->
                 </div>
             </div>
         </div>

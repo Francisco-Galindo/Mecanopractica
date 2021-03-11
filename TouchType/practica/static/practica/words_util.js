@@ -39,18 +39,17 @@ function drawFingerImage(selector, finger) {
 
 
     if (words[1] === 'izquierdo') {
-        console.log('asdf')
         div.style.transform = 'rotateY(180deg)'
     }
 
     let size = selector === 'hand-center' ? 20 : 10;
 
     div.innerHTML = `<img style="height: ${size}vh;" src="/static/practica/media/dedos/${words[0]}.svg"/>`;
-    console.log(finger)
+
 }
 
 function fingerToString(finger) {
-    console.log(finger)
+
     if (finger === 0) {
         finger = "Menique izquierdo"
     } else if (finger === 1) {
