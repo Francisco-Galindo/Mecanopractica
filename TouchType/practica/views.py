@@ -53,6 +53,19 @@ def game_page(request):
         return HttpResponseRedirect(reverse("main_page"))
 
 
+def top_page(request):
+    modes = []
+    glosarios = []
+    for mode in Text_Mode.objects.all():
+        if "Glosario" in getattr(mode, "mode"):
+            glosarios.append(mode)
+        else:
+            modes.append(mode)
+    return render(request, 'practica/leaderboard.html', {
+        "modes": modes,
+        "glosarios": glosarios
+    })
+
 def user_page(request):
     if request.user.is_authenticated:
         modes = []
