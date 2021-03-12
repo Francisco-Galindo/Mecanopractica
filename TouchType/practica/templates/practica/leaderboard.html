@@ -1,0 +1,53 @@
+{% extends "practica/layout.html" %}
+{% load static %}
+
+{% block menu_title %}<div style="font-size: 2vh; padding-top: 1.25vh;">Tablero del modo (modo)</div>{% endblock %}
+
+{% block left_block %}
+{% endblock %}
+
+{% block main_block %}
+<div class="main" id="center" style="width: 95vw;">
+    <div class="container" style="max-width: 100vw;">
+        <div class="row align-items-start" style="height: 10vh;">
+            <div class="col" id="tablero" style="text-align: center;">
+                Tablero del modo (modo)
+            </div>
+            <div class="col" style="display: flex;">
+                <div class="btn-group" id="dropdown-modos" style="margin-right:0px;">
+
+                    <button type="button" class="btn btn-secondary" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false">
+                        Elegir modo de juego
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" style="background-color: var(--highlight); border: 2px solid var(--text); color: var(--text);">
+                        <div>Glosarios</div>
+                        {% for glosario in glosarios%}
+                            <button  style="color: var(--text);" name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
+                        {% endfor %} 
+                        <div>Otros modos</div>
+                        {% for mode in modes %}
+                            <button style="color: var(--text);" name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="dropdown-item">{{mode}}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-start" style="height: 55vh; width: 100%;">
+        </div>
+
+    </div> 
+
+    </div>
+{% endblock %}
+
+{% block right_block %}
+{% endblock %}
+
+{% block script1 %}
+    <script src="{% static 'practica/user_stats.js' %}"></script>
+{% endblock %}
+
+
+{% block script2 %}
+    <script src="{% static 'practica/words_util.js' %}"></script>
+{% endblock %}
