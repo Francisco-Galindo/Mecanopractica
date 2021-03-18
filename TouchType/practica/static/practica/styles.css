@@ -33,7 +33,12 @@ body {
 .show {display:block;}
 
 .dropdown-content button:hover {
-    background-color: #ddd;
+    background-color: #000000;
+    color: var(--background);
+}
+
+.dropdown-option:hover {
+    color: var(--background);
 }
 
 .incorrect{
@@ -72,6 +77,7 @@ body {
 #form {
     /*margin-left: 5vw;
     margin-left: 5vw;*/
+    
     width: 50vw;
     margin-bottom: 0vw;
     position: absolute;

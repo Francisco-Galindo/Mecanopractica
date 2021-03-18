@@ -84,7 +84,7 @@ def user_page(request):
     else:
         return HttpResponseRedirect(reverse("main_page"))
 
-
+#Hola
 def login_view(request):
     #Cuando la forma sea enviada
     if request.method == "POST":
@@ -231,7 +231,7 @@ def words(request, mode):
             fingers_added = fingers_proportions(fingers)
             worst_finger = fingers_added.index(min(fingers_added))
 
-            finger_letters = [['q', 'a', 'á', 'z', '1', '!'], 
+            finger_letters =    [['q', 'a', 'á', 'z', '1', '!'], 
                                 ['w', 's', 'x', '2', '\"'], 
                                 ['e', 'é', 'd', 'c', '3', '#'], 
                                 ['r', 'f', 'v', '4', '$', 't', 'g', 'b'], 
@@ -241,7 +241,7 @@ def words(request, mode):
                                 ['p', 'ñ', '-', '=', '0']]
                     
             weights = []
-            for word in words:
+            for word in words: 
                 weight = getattr(word, "weight")
                 try:
                     string = getattr(word, "word")
@@ -297,5 +297,6 @@ def get_all_user_stats(request, mode):
         dict_to_send["sessions"] = json_sessions
         dict_to_send["fingers"] = fingers_added
         dict_to_send["worst_finger"] = worst_finger
+
 
         return JsonResponse(json.dumps(dict_to_send, ensure_ascii=False), safe=False)

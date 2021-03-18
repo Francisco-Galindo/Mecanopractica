@@ -1,7 +1,9 @@
 {% extends "practica/layout.html" %}
 {% load static %}
 
-{% block menu_title %}Bienvenido{% endblock %}
+{% block menu_title %}
+    <a href="{% url 'main_page' %}">MecanoPráctica</a>
+{% endblock %}
 
 {% block left_block %}
 {% endblock %}
@@ -30,7 +32,7 @@
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Para jugar, debes iniciar sesión
                         </button>
-                        <div class="dropdown-menu" >
+                        <div class="dropdown-menu" style="background-color: var(--highlight); color: var(--text);">
                             <form class="px-4 py-3" action="{% url 'login'%}" method="post">
                                 {% csrf_token %}
                                 <div class="form-group">
@@ -44,9 +46,13 @@
                                 </br>
                                 <button type="submit" class="btn btn-primary">Ingresar</button>
                             </form>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{% url 'register' %}">¿Eres nuevo? Crea un usuario</a>
+                            <div class="dropdown-divider" ></div>
+                            <a class="dropdown-item" href="{% url 'register' %}" style="color: var(--text);">¿Eres nuevo? Crea un usuario</a>
                         </div> 
+                    </div>
+
+                    <div style="align-self: center;">
+                        <a type="button" class="btn btn-secondary" href="{% url 'register' %}">Registrarse</a>
                     </div>
             
                 {% endif %}

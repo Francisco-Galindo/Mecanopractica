@@ -1,8 +1,10 @@
+// Corre la función con la cual crear el gráfico con todas las estadísticas del usuario.
 document.addEventListener('DOMContentLoaded', function() {
     getUserStats();
 });
 
 
+// Crea el gráfico con el cual representar todas las partidas del jugador
 function tablaWpm(lista_de_wpm, lista_de_acc, lista_fechas) {
     var lista_labels = [];
 
@@ -21,14 +23,14 @@ function tablaWpm(lista_de_wpm, lista_de_acc, lista_fechas) {
                 yAxisID: 'WPM',
                 data: lista_de_wpm,
                 fill: false,
-                borderColor: 'rgba(0, 255, 0, 0.1)'
+                borderColor: 'rgba(150, 224, 114, 0.3)'
             },
             {
                 label: "Precisión (%)",
                 yAxisID: '%',
                 data: lista_de_acc,
                 fill: false,
-                borderColor: 'rgba(255, 0, 0, 0.1)'
+                borderColor: 'rgba(238, 93, 67, 0.3)'
             }]
         },
         options: {
@@ -38,7 +40,15 @@ function tablaWpm(lista_de_wpm, lista_de_acc, lista_fechas) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
+                xAxes: [{
+                    gridLines: {
+                        color: "#444444"
+                    }
+                }],
                 yAxes: [{
+                    gridLines: {
+                        color: '#444444'
+                    },
                     scaleLabel: {
                         display: true,
                         labelString: 'WPM'
@@ -52,6 +62,9 @@ function tablaWpm(lista_de_wpm, lista_de_acc, lista_fechas) {
                     }
                 }, 
                 {
+                    gridLines: {
+                        color: '#444444'
+                    },
                     scaleLabel: {
                         display: true,
                         labelString: '%'
@@ -131,12 +144,13 @@ function getUserStats() {
     });
 }
 
+// Crea una tabla con num_sessions filas de las mejores partidas del usuatrio
 function createTop(sessions, num_sessions) {
     var tabla = document.getElementById("tablero");
     tabla.innerHTML = `Mejores ${num_sessions} partidas en el modo ${localStorage.getItem('mode')}`
     tabla.innerHTML += `</br>`
     let tablerito =  document.createElement("TABLE");
-    tablerito.innerHTML += `<tr> <td>Velocidad</td> <td>WPM</td> <td>Fecha</td> </tr>`
+    tablerito.innerHTML += `<tr> <td>Velocidad</td> <td>Precisión</td> <td>Fecha</td> </tr>`
     let i = 0;
     while (i < num_sessions && sessions[i] !== undefined) {
         tablerito.innerHTML += `<tr><td>${JSON.parse(sessions[i]).wpm}</td><td>${JSON.parse(sessions[i]).acc}</td><td>${JSON.parse(sessions[i]).timestamp}</td></tr>`

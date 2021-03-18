@@ -11,7 +11,7 @@ var wpm;
 var terminado;
 var space_pressed;
 var fingers = [];
-var finger_letters = [['q', 'a', 'á', 'z', '1', '!'], 
+var finger_letters =    [['q', 'a', 'á', 'z', '1', '!'], 
                         ['w', 's', 'x', '2', '\"'], 
                         ['e', 'é', 'd', 'c', '3', '#'], 
                         ['r', 'f', 'v', '4', '$', 't', 'g', 'b'], 
@@ -26,13 +26,15 @@ var acc_list = [];
 var spans = []
 var loop;
 var velocidad = 1;
+var palabras_totales;
 
 document.addEventListener('DOMContentLoaded', function() {
     mode = localStorage.getItem('mode');
 
     drawFingerImage('hand-left', undefined);
-    mode_str = document.getElementById('modo');
-    mode_str.innerHTML = `Modo: ${mode}`;
+    let mode_str = document.getElementById('mode-indicator');
+    mode_str.innerHTML = `Modo ${mode}`;
+
 
     total_presses = 0;
     correct_presses = 0;
@@ -48,9 +50,10 @@ document.addEventListener('DOMContentLoaded', function() {
     for (let i=0; i<16; ++i) fingers[i] = 0;
     wpm_list = [];
     acc_list = [];
-
+    palabras_totales = 0;
 
     fetchWords(mode);
+
 
 
 
@@ -114,6 +117,7 @@ function fetchWords(words) {
                 i = 0;
                 n += 1;
             }
+
             for(let j = i; j < n-1; j++) {
                 const letter = document.createElement("span");
                 letter.innerHTML = `${letters.charAt(j)}`
@@ -124,6 +128,7 @@ function fetchWords(words) {
             space.innerHTML = ` `;
             space.classList.add("unwritten");
             space.classList.add("space");
+            palabras_totales ++;
             div.append(space);
         });
     })
@@ -131,6 +136,17 @@ function fetchWords(words) {
         const div = document.querySelector('#text')
         spans = div.children
         spans[0].style.borderLeft = "0.3vw dotted #d5ced9"
+
+        // Poniendo el título del Glosario en negritas
+        if (mode.includes('Glosario') === true) {
+            let i = 0;
+            while (spans[i].innerHTML !== '.' && spans[i].innerHTML !== ':') {
+                spans[i].style.fontWeight ='bold';
+                i++;
+            } 
+            let mode_str = document.getElementById('mode-indicator');
+            mode_str.innerHTML += `</br><span style="font-size: 5vw; font-weight: bold ;">${spans[0].innerHTML}</span>`; 
+        }
 
         drawNextFinger(spans);
 
@@ -224,6 +240,7 @@ function checkCorrectWord(mark) {
     return is_correct;
 }
 
+// Borra la primer palabra que aparece en la pantalla de juego.
 function deleteFirstWrittenWord() {
     var text = document.querySelector('#text');
     const first_space = searchSpan("space", undefined, 0, "index", "first");
@@ -234,7 +251,7 @@ function deleteFirstWrittenWord() {
 
 }
 
-// Esta pequeña función se encarga de identificar a qué dedo corresp
+// Esta pequeña función se encarga de identificar a qué dedo corresponde
 function checkWhatFinger(key, finger_array) {
 
     if (finger_array === undefined) {
@@ -251,7 +268,7 @@ function checkWhatFinger(key, finger_array) {
     return which_finger;
 }
 
-// Función que borra la última letra que 
+// Función que borra la última letra borrable
 function deleteKey() {
     const key_to_delete = searchSpan("written", undefined, 0, "index", "last"); 
 
@@ -337,9 +354,13 @@ function keyPressed(event) {
             }
             total_presses ++;
             document.getElementById("form").reset();
+            document.getElementById("word-counter").innerHTML = `${space_pressed} / ${palabras_totales} palabras escritas`
 
         } else {
             checkKeyPresses(key);
+            if (space_pressed === 0) {
+                document.getElementById("word-counter").innerHTML = `0 / ${palabras_totales} palabras escritas`
+            }
             total_presses ++;
         }
 
@@ -378,16 +399,21 @@ function results(valid) {
 
     document.querySelector('#text').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
-    const div = document.querySelector('#results');
+    let mode_str = document.getElementById('mode-indicator');
+    mode_str.innerHTML = `Modo ${mode}`;
+
+    const div = document.querySelector('#grafica-resultados');
     div.innerHTML = `<span style="font-size: 2vw;">Resultados</span>\n`;
     if (valid === false) {
         div.innerHTML += `<span style="font-size: 1.5vw; color: red;">Esta partida no es válida,\n porque tu presisión fue menor al 75%</span>\n`;
     }
     div.innerHTML += `<span style="font-size: 1.5vw;"> wpm: ${wpm}  </span>`;
     div.innerHTML += `<span style="font-size: 1.5vw;">acc: ${acc}%</span>\n`;
-    div.innerHTML += `<div id="chart"><canvas id="histo"></canvas></div>\n`;
-    div.innerHTML += `<button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>`;
-    div.style.display = 'block';
+    div.innerHTML += `<div id="chart"><canvas id="histo"></canvas></div>`;
+
+
+
+    document.querySelector('#results').style.display = 'block';
     crearTabla(wpm_list, acc_list, wpm_list.length);
 }
 

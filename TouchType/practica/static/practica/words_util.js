@@ -1,10 +1,9 @@
+
+// Selecciona el modo fácil en caso de que no haya ninguno guardado anteriormente.
 if (!localStorage.getItem('mode')) {
     localStorage.setItem('mode', 'Fácil')
 }
 
-function dropdown() {
-    document.getElementById("modes").classList.toggle("show");   
-}
 
 function changeMode(mode) {
     localStorage.setItem('mode', mode);
@@ -18,6 +17,7 @@ function refreshPage(){
     window.location.reload();
 } 
 
+// Dibuja el dedo correspondiente a la siguiente letra del juego.
 function drawNextFinger(spans_list) {
     if (localStorage.getItem('mode') === 'Fácil') {
         let finger = searchSpan("unwritten", undefined, 0, "element", "first").innerHTML;
@@ -27,6 +27,7 @@ function drawNextFinger(spans_list) {
     }
 }
 
+// Dependiendo del dedo dado, dibujar la imagen correspondiente.
 function drawFingerImage(selector, finger) {
     let div = document.getElementById(selector);
     div.style.transform = 'rotateY(0deg)'
@@ -48,6 +49,7 @@ function drawFingerImage(selector, finger) {
 
 }
 
+// Aquí nos encargamos de convertir los números de dedo a su dedo correspondiente.
 function fingerToString(finger) {
 
     if (finger === 0) {
@@ -74,7 +76,7 @@ function fingerToString(finger) {
 }
 
 
-
+// Se crea un gráfico que para representar la velocidad del jugador a lo largo de la partida, con el uso de Chart.js
 function crearTabla(lista_de_wpm, lista_de_acc, j) {
     var lista_labels = [];
 
@@ -91,14 +93,14 @@ function crearTabla(lista_de_wpm, lista_de_acc, j) {
                 yAxisID: 'WPM',
                 data: lista_de_wpm,
                 fill: false,
-                borderColor: 'rgba(0, 255, 0, 0.1)'
+                borderColor: 'rgba(150, 224, 114, 0.5)'
             },
             {
                 label: "Precisión (%)",
                 yAxisID: '%',
                 data: lista_de_acc,
                 fill: false,
-                borderColor: 'rgba(255, 0, 0, 0.1)'
+                borderColor: 'rgba(238, 93, 67, 0.5)'
             }]
         },
         options: {
@@ -108,7 +110,15 @@ function crearTabla(lista_de_wpm, lista_de_acc, j) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
+                xAxes: [{
+                    gridLines: {
+                        color: "#444444"
+                    }
+                }],
                 yAxes: [{
+                    gridLines: {
+                        color: '#444444'
+                    },
                     scaleLabel: {
                         display: true,
                         labelString: 'WPM'
@@ -122,6 +132,9 @@ function crearTabla(lista_de_wpm, lista_de_acc, j) {
                     }
                 }, 
                 {
+                    gridLines: {
+                        color: '#444444'
+                    },
                     scaleLabel: {
                         display: true,
                         labelString: '%'

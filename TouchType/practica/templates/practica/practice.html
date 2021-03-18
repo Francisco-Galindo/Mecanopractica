@@ -1,7 +1,9 @@
 {% extends "practica/layout.html" %}
 {% load static %}
 
-{% block menu_title %}Practica{% endblock %}
+{% block menu_title %}
+    <a href="{% url 'main_page' %}">MecanoPráctica</a>
+{% endblock %}
 
 {% block left_block %}
 <div class="main" id="left">
@@ -20,16 +22,47 @@
 {% block main_block %}
     <div class="main" id="center">
         {% if user.is_authenticated %}
+            <div id="mode-indicator" style="text-align: center; font-size: 3vw;"></div>
             <div id="text"></div>
             
-            <form id="form">
+            <form id="form" style="text-align: center; font-size: 2vw;">
                 <div id="hand-center" style="display: flex; justify-content: center; height: 20vh;">
                 </div>
+                <span id="word-counter">¡Escribe algo para iniciar el juego!</span>
                 <input value="" class="form-control form-control-lg input" type="text" autofocus onkeydown="keyPressed(event)">
+
             </form>
 
-            <div id="results" style="white-space: pre; text-align: center;">
+            <div id="results" style="text-align: center;">
+                <div id="grafica-resultados" style="height: 100%; white-space: pre;">
+
+                </div>
+                </br>
+                <div style="display: flex; height: 5vh;">
+                    <button type="button" onClick="refreshPage()" class="btn btn-primary btn-sm">Volver a intentar</button>
+                    
+                    <div class="btn-group" id="dropdown-modos" style="margin-left: 20vw; white-space: normal;">
+
+                        <button type="button" class="btn btn-secondary" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" style="width: 17.5vw;">
+                            Elegir modo de juego
+                        </button>
+
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" style="background-color: var(--highlight); border: 2px solid var(--text); color: var(--text);">
+                            <div>Glosarios</div>
+                            {% for glosario in glosarios%}
+                                <button  style="color: var(--text);" name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
+                            {% endfor %} 
+                            <div>Otros modos</div>
+                            {% for mode in modes %}
+                                <button style="color: var(--text);" name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="dropdown-item">{{mode}}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+
+                </div>
             </div>
+
         {% else %}
             <div style="font-size: 30px;">Inicia sesión para poder practicar</div>
         {% endif %}

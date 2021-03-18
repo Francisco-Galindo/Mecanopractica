@@ -1,6 +1,8 @@
 {% extends "practica/layout.html" %}
 
-{% block menu_title %}Inicio de sesión{% endblock %}
+{% block menu_title %}
+    <a href="{% url 'main_page' %}">MecanoPráctica</a>
+{% endblock %}
 
 {% block left_block %}
 <div class="main" id="left" style="display: none;"></div>
