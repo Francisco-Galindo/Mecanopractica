@@ -112,12 +112,16 @@ function crearTabla(lista_de_wpm, lista_de_acc, j) {
             scales: {
                 xAxes: [{
                     gridLines: {
-                        color: "#444444"
+                        color: "#FFFFFF"
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Tiempo (s)'
                     }
                 }],
                 yAxes: [{
                     gridLines: {
-                        color: '#444444'
+                        color: '#FFFFFF'
                     },
                     scaleLabel: {
                         display: true,
@@ -133,7 +137,7 @@ function crearTabla(lista_de_wpm, lista_de_acc, j) {
                 }, 
                 {
                     gridLines: {
-                        color: '#444444'
+                        color: '#FFFFFF'
                     },
                     scaleLabel: {
                         display: true,

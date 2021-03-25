@@ -23,7 +23,12 @@
     <div class="main" id="center">
         {% if user.is_authenticated %}
             <div id="mode-indicator" style="text-align: center; font-size: 3vw;"></div>
-            <div id="text"></div>
+
+            <div id="text-block" style="position: relative; height: 30vh;">
+                <div id="text" class="bloque"></div>
+                <div id="mask" class="bloque"></div>
+            </div>
+            
             
             <form id="form" style="text-align: center; font-size: 2vw;">
                 <div id="hand-center" style="display: flex; justify-content: center; height: 20vh;">
@@ -67,6 +72,7 @@
             <div style="font-size: 30px;">Inicia sesión para poder practicar</div>
         {% endif %}
     </div>
+    
 {% endblock %}
 
 {% block right_block %}

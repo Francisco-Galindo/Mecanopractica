@@ -21,45 +21,57 @@
                 <div style="justify-self: center;">{% block menu_title %}{% endblock %}</div>
                 <div id="botones">
                     {% if user.is_authenticated %}
-                        <a class="boton" href="{% url 'logout' %}" style="grid-column: -3; grid-row: 1;">
-                            <img src="{% static 'practica/media/logout.svg' %}" alt="Cerrar sesión"/>
-                        </a>
-                        <a class="boton" href="{% url 'user_page' %}" style="grid-column: -2; grid-row: 1;">
-                            <img src="{% static 'practica/media/user.svg' %}" alt="Registrarse"/>
-                        </a>
+                        <span title="Cerrar sesión" style="grid-column: -3; grid-row: 1;">
+                            <a class="boton" href="{% url 'logout' %}" >
+                                <img src="{% static 'practica/media/logout.svg' %}" alt="Cerrar sesión"/>
+                            </a>
+                        </span>
+
+                        <span title="Ver estadísticas de usuario" style="grid-column: -2; grid-row: 1;">
+                            <a class="boton" href="{% url 'user_page' %}">
+                                <img src="{% static 'practica/media/user.svg' %}" alt="Ver estadísticas de usuario"/>
+                            </a>
+                        </span>
                     {% else %}
-                        <a class="boton" href="{% url 'register' %}" style="grid-column: -2; grid-row: 1;">
-                            <img src="{% static 'practica/media/register.svg' %}" alt="Registrarse"/>
-                        </a>
-                        <a class="boton" href="{% url 'login' %}" style="grid-column: -3; grid-row: 1;">
-                            <img src="{% static 'practica/media/enter.svg' %}" alt="Iniciar sesión"/>
-                        </a>
+                        <span title="Registrarse" style="grid-column: -2; grid-row: 1;">
+                            <a class="boton" href="{% url 'register' %}" >
+                                <img src="{% static 'practica/media/register.svg' %}" alt="Registrarse"/>
+                            </a>
+                        </span>
+
+                        <span title="Iniciar sesión" style="grid-column: -3; grid-row: 1;">
+                            <a class="boton" href="{% url 'login' %}">
+                                <img src="{% static 'practica/media/enter.svg' %}" alt="Iniciar sesión"/>
+                            </a>
+                        </span>
                     {% endif %}
-                    <div class="boton" style="grid-column: -4; grid-row: 1;">
-                        <div class="btn-group" id="dropdown-modos" style="height: 100%; width: 100%; padding: 0px;">
+                    <span title="Iniciar sesión" style="grid-column: -4; grid-row: 1;">
+                        <div class="boton">
+                            <div class="btn-group" id="dropdown-modos" style="height: 100%; width: 100%; padding: 0px;">
 
-                            <button type="button" class="btn btn-secondary" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" style="background-color: rgba(0,0,0, 0); border:0px solid var(--text); padding: 0px;">
-                                <img src="{% static 'practica/media/settings.svg' %}" alt="Registrarse"/>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" style="background-color: var(--highlight); border: 2px solid var(--text); color: var(--text);">
+                                <button type="button" class="btn btn-secondary" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" style="background-color: rgba(0,0,0, 0); border:0px solid var(--text); padding: 0px;">
+                                    <img src="{% static 'practica/media/settings.svg' %}" alt="Registrarse"/>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" style="background-color: var(--highlight); border: 2px solid var(--text); color: var(--text);">
 
-                                <div style="margin-left: 15px; margin-right: 15px;">
-                                    <div>Modos de juego</div>
-                                    {% for mode in modes %}
-                                        <button style="color: var(--text);" name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="dropdown-item dropdown-option">{{mode}}</button>
-                                    {% endfor %}
+                                    <div style="margin-left: 15px; margin-right: 15px;">
+                                        <div>Modos de juego</div>
+                                        {% for mode in modes %}
+                                            <button style="color: var(--text);" name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="dropdown-item dropdown-option">{{mode}}</button>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div style="margin-left: 30px; margin-right: 15px;">
+                                        <div>Glosarios</div>
+                                        {% for glosario in glosarios%}
+                                            <button  style="color: var(--text);" name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
+                                        {% endfor %} 
+                                    </div>
+                                    
                                 </div>
-
-                                <div style="margin-left: 30px; margin-right: 15px;">
-                                    <div>Glosarios</div>
-                                    {% for glosario in glosarios%}
-                                        <button  style="color: var(--text);" name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
-                                    {% endfor %} 
-                                </div>
-                                
                             </div>
                         </div>
-                    </div>
+                    </span>
                     
                 </div>
             </div>

@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     drawFingerImage('hand-left', undefined);
     let mode_str = document.getElementById('mode-indicator');
-    mode_str.innerHTML = `Modo ${mode}`;
+    mode_str.innerHTML = `${mode}`;
 
 
     total_presses = 0;
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loop = setInterval(actualizarJuego, 1000/velocidad)
 
     document.getElementById('results').style.display = 'none';
-    document.getElementById('text').style.display = 'block';
+    document.getElementById('text-block').style.display = 'block';
     document.getElementById('form').style.display = 'block';
     document.getElementById("form").reset();
 
@@ -103,33 +103,41 @@ function fetchWords(words) {
         console.log(words);
         const div = document.querySelector('#text');
         div.innerHTML = "";
+        let contador = 0
         words.forEach(function(word) {
             let cortar = true
-            let letters = JSON.stringify(word.word);
+            /*if (contador === 0) {
+                document.getElementById("left").innerHTML += `Autor: ${JSON.parse(word).author}`;
+            } else if (contador > 0) {*/
+                let letters = JSON.stringify(word.word);
 
-            if (letters === undefined) {
-                cortar = false
-                letters = JSON.parse(word).word;
-            }
-            let n = letters.length;
-            let i = 1
-            if (cortar === false) {
-                i = 0;
-                n += 1;
-            }
+                if (letters === undefined) {
+                    cortar = false
+                    letters = JSON.parse(word).word;
+                }
+                let n = letters.length;
+                let i = 1
+                if (cortar === false) {
+                    i = 0;
+                    n += 1;
+                }
+    
+                for(let j = i; j < n-1; j++) {
+                    const letter = document.createElement("span");
+                    letter.innerHTML = `${letters.charAt(j)}`
+                    letter.classList.add("unwritten");
+                    div.append(letter);
+                }
+                const space = document.createElement("span");
+                space.innerHTML = ` `;
+                space.classList.add("unwritten");
+                space.classList.add("space");
+                palabras_totales ++;
+                div.append(space);
+            
 
-            for(let j = i; j < n-1; j++) {
-                const letter = document.createElement("span");
-                letter.innerHTML = `${letters.charAt(j)}`
-                letter.classList.add("unwritten");
-                div.append(letter);
-            }
-            const space = document.createElement("span");
-            space.innerHTML = ` `;
-            space.classList.add("unwritten");
-            space.classList.add("space");
-            palabras_totales ++;
-            div.append(space);
+            
+            contador ++;
         });
     })
     .then(function(){ 
@@ -397,7 +405,7 @@ function showVel(){
 function results(valid) {
     playing = false;
 
-    document.querySelector('#text').style.display = 'none';
+    document.querySelector('#text-block').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     let mode_str = document.getElementById('mode-indicator');
     mode_str.innerHTML = `Modo ${mode}`;
@@ -405,7 +413,7 @@ function results(valid) {
     const div = document.querySelector('#grafica-resultados');
     div.innerHTML = `<span style="font-size: 2vw;">Resultados</span>\n`;
     if (valid === false) {
-        div.innerHTML += `<span style="font-size: 1.5vw; color: red;">Esta partida no es válida,\n porque tu presisión fue menor al 75%</span>\n`;
+        div.innerHTML += `<span style="font-size: 1vw; color: red;">Esta partida no es válida,\n porque tu presisión fue menor al 75% o pasaste demasiado tiempo sin escribir</span>\n`;
     }
     div.innerHTML += `<span style="font-size: 1.5vw;"> wpm: ${wpm}  </span>`;
     div.innerHTML += `<span style="font-size: 1.5vw;">acc: ${acc}%</span>\n`;

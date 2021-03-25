@@ -14,6 +14,9 @@ from .util import *
 from .models import *
 
 def main_page(request):
+    return render(request, "practica/main_page.html")
+
+def landing_page(request):
     return render(request, "practica/landing_page.html")
 
 
@@ -220,7 +223,8 @@ def words(request, mode):
 
         if '10' in mode or 'Fácil' in mode:
             if '10' in mode:
-                words = Words_es.objects.order_by("-weight")[:int(mode)]
+                mode_split = mode.split(' ')
+                words = Words_es.objects.order_by("-weight")[:int(mode_split[0])]
             else:
                 words = Substring.objects.order_by("-weight")[:1000]
 
@@ -270,6 +274,10 @@ def words(request, mode):
             string = getattr(text, 'text')
             words = string.split(' ')
             words_to_send = []
+            #author = getattr(text, 'author')
+            #author_dict = {}
+            #author_dict['author'] = getattr(author, 'first_name')
+            #words_to_send.append(author_dict)
             for word in words:
                 word_dict = {}
                 word_dict["word"] = word
