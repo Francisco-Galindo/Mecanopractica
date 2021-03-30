@@ -46,17 +46,21 @@ class Words_es(models.Model):
 
 class Text_Author(models.Model):
     first_name = models.CharField(max_length=40)
-    middle_name = models.CharField(max_length=40, null=True)
+    middle_name = models.CharField(max_length=40, null=True, blank=True)
     last_name = models.CharField(max_length=40)
-    born_year = models.IntegerField(null=True)
+    born_year = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.last_name}, {self.first_name}"
 
 class Text_Mode(models.Model):
-    mode = models.CharField(max_length=30)
+    mode = models.CharField(max_length=45)
 
     def __str__(self):
         return f"{self.mode}"
 
 class Text(models.Model):   
+    title = models.TextField()
     author = models.ForeignKey("Text_Author", on_delete=models.PROTECT, related_name="texts_written", null=False, default=1) 
     mode = models.ForeignKey("Text_Mode", on_delete=models.PROTECT, related_name="texts_in_mode", null=False, default=1)
     year = models.IntegerField(null=True)
@@ -69,13 +73,6 @@ class Text(models.Model):
             "year": self.year,
             "text": self.text
         }
-
-class Concept(models.Model):
-    mode = models.ForeignKey("Text_Mode", on_delete=models.PROTECT, related_name="concepts_in_mode", null=False, default=1)
-    text = models.TextField()
-
-    def __str__(self):
-        return f"{self.text}"
 
 class Session(models.Model):
     user = models.ForeignKey("User", on_delete=models.DO_NOTHING, related_name="players_that_played")

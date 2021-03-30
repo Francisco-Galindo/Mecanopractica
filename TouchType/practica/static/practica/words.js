@@ -34,8 +34,11 @@ document.addEventListener('DOMContentLoaded', function() {
     drawFingerImage('hand-left', undefined);
     let mode_str = document.getElementById('mode-indicator');
     mode_str.innerHTML = `${mode}`;
+    if (mode === 'Fácil') {
+        document.getElementById('worst_finger_indicator_text').innerHTML = 'Dedo a practicar: ';
+    }
 
-
+    spans = []
     total_presses = 0;
     correct_presses = 0;
     incorrect_presses = 0;
@@ -68,20 +71,59 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+function reiniciar() {
+
+    let mode_str = document.getElementById('mode-indicator');
+    mode_str.innerHTML = `${mode}`;
+    if (mode === 'Fácil') {
+        document.getElementById('worst_finger_indicator_text').innerHTML = 'Dedo a practicar: ';
+    }
+
+    spans = []
+    total_presses = 0;
+    correct_presses = 0;
+    incorrect_presses = 0;
+    correct_spaces = 0;
+    playing = false;
+    playing_timer = 0;
+    timer = 0;
+    terminado = 0;
+    space_pressed = 0;
+    fingers = [];
+    fingers.length = 16;
+    for (let i=0; i<16; ++i) fingers[i] = 0;
+    wpm_list = [];
+    acc_list = [];
+    palabras_totales = 0;
+
+    fetchWords(mode);
+
+
+
+
+    loop = setInterval(actualizarJuego, 1000/velocidad)
+
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('text-block').style.display = 'block';
+    document.getElementById('form').style.display = 'block';
+    document.getElementById("form").reset();
+}
+
+
 
 function actualizarJuego() {
 
     if (playing === true) {
         timer += (1/velocidad);
         playing_timer -= (1/velocidad);
-        if (/*timer === 60 ||*/ playing_timer <= 0) {
+        if (timer === 300 || playing_timer <= 0) {
             playing = false;
             results(false);
-            stopGame();
+            stopGame(loop);
         }
         showVel();
     } else if (playing === false && timer > 0) {
-        stopGame(); 
+        stopGame(loop); 
         console.log(timer)
         postResults();
 
@@ -89,7 +131,7 @@ function actualizarJuego() {
 }
 
 
-function stopGame() {
+function stopGame(loop) {
     clearInterval(loop);
 }
 
@@ -213,6 +255,8 @@ function checkCorrectWord(mark) {
     var first_letter = searchSpan("written", "space", 1, "index", "last");
     if (first_letter === 1) {
         first_letter = 0;
+    } else if (first_letter === null) {
+        return false;
     }
 
     const last_letter = searchSpan("unwritten", "space", -1, "index", "first");
@@ -244,20 +288,26 @@ function checkCorrectWord(mark) {
             correct_presses ++;
         }
     }
-
     return is_correct;
 }
+
 
 // Borra la primer palabra que aparece en la pantalla de juego.
 function deleteFirstWrittenWord() {
     var text = document.querySelector('#text');
-    const first_space = searchSpan("space", undefined, 0, "index", "first");
+
+    const first_space = searchSpan("space", undefined, 0, "index", "first");      
+
+    if (typeof(first_space) !== 'number') {
+        return;
+    }
 
     for (let i = 0; i <= first_space; i++) {
         text.removeChild(text.childNodes[0]);
     }
 
 }
+
 
 // Esta pequeña función se encarga de identificar a qué dedo corresponde
 function checkWhatFinger(key, finger_array) {
@@ -276,6 +326,7 @@ function checkWhatFinger(key, finger_array) {
     return which_finger;
 }
 
+
 // Función que borra la última letra borrable
 function deleteKey() {
     const key_to_delete = searchSpan("written", undefined, 0, "index", "last"); 
@@ -292,6 +343,7 @@ function deleteKey() {
         }
     }
 }
+
 
 // La función de escribir debe terminar la prueba cuando el tiempo acabe o (se escriba correctamente la última palabra, o se presione espacio en la última palabra), esto depende del modo en el que este el programa
 function checkKeyPresses(key) {
@@ -333,7 +385,7 @@ function checkKeyPresses(key) {
 
 
 // Esta función es llamada cuando se presiona una tecla en el modo de practica
-//Se ocupa de tomar la decision de llamar la función correspondiente dependiendo de si fue presionado el Backspace u otra tecla
+// Se ocupa de tomar la decision de llamar la función correspondiente dependiendo de si fue presionado el Backspace u otra tecla
 function keyPressed(event) {
     const key = event.key;
     if (!(event.ctrlKey || key === "Shift" || event.altKey || event.isComposing || key === "Dead" || key === "OS")) {
@@ -342,18 +394,22 @@ function keyPressed(event) {
 
         var cursor = searchSpan("unwritten", undefined, 0, "index", "first");
         var cursor_minus = searchSpan("unwritten", undefined, -1, "index", "first");
-        if (spans[cursor_minus].className === "unwritten space") {
+        if (spans[cursor_minus] !== undefined && spans[cursor_minus].className === "unwritten space") {
             cursor --;
         }
+        
         if (spans[cursor] !== undefined) {
             spans[cursor].style.setProperty('border-left', 'initial');
         }
+
         if (key == "Backspace") {
             deleteKey();
+
         } else if (key === " ") {
             space_pressed ++;
 
-            if(!checkCorrectWord(true) && searchSpan("unwritten", undefined, 0, "element", "first") === null) {
+            if(!checkCorrectWord(true) && searchSpan("unwritten", undefined, 1, "element", "first") === null) {
+                console.log("safdaasdfasdf", timer)
                 playing = false;
                 terminado = 1;
             }
@@ -374,7 +430,7 @@ function keyPressed(event) {
 
         cursor = searchSpan("unwritten", undefined, 0, "index", "first");
         cursor_minus = searchSpan("unwritten", undefined, -1, "index", "first");
-        if (spans[cursor_minus].className === "unwritten space") {
+        if (spans[cursor_minus] !== undefined && spans[cursor_minus].className === "unwritten space") {
             cursor --;
         }
         if (spans[cursor] !== undefined) {
@@ -405,8 +461,6 @@ function showVel(){
 function results(valid) {
     playing = false;
 
-    document.querySelector('#text-block').style.display = 'none';
-    document.querySelector('#form').style.display = 'none';
     let mode_str = document.getElementById('mode-indicator');
     mode_str.innerHTML = `Modo ${mode}`;
 
@@ -420,13 +474,14 @@ function results(valid) {
     div.innerHTML += `<div id="chart"><canvas id="histo"></canvas></div>`;
 
 
-
+    document.querySelector('#text-block').style.display = 'none';
+    document.querySelector('#form').style.display = 'none';
     document.querySelector('#results').style.display = 'block';
     crearTabla(wpm_list, acc_list, wpm_list.length);
 }
 
 
-// 
+// Se encarga de obtener la cookie solicitada
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {

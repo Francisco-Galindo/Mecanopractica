@@ -10,7 +10,9 @@
     {% if user.is_authenticated %}
         <div>Bienvenido, <strong>{{request.user}}</strong></div>
         </br>
-        <div>Practicando: </div>
+        <button class="btn btn-primary" type="submit">Button</button>
+        </br></br>
+        <div id="worst_finger_indicator_text">Dedo más débil: </div>
         <div id="hand-left" style="font-size: 1.5vw; width: 10vh;">{{finger}}</div>
         </br></br>
         <div id="modo"></div>
@@ -22,7 +24,7 @@
 {% block main_block %}
     <div class="main" id="center">
         {% if user.is_authenticated %}
-            <div id="mode-indicator" style="text-align: center; font-size: 3vw;"></div>
+            <div id="mode-indicator" style="text-align: center; font-size: 2.5vw;"></div>
 
             <div id="text-block" style="position: relative; height: 30vh;">
                 <div id="text" class="bloque"></div>

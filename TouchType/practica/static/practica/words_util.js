@@ -20,10 +20,18 @@ function refreshPage(){
 // Dibuja el dedo correspondiente a la siguiente letra del juego.
 function drawNextFinger(spans_list) {
     if (localStorage.getItem('mode') === 'Fácil') {
-        let finger = searchSpan("unwritten", undefined, 0, "element", "first").innerHTML;
-        finger = checkWhatFinger(finger, undefined);
-        finger = fingerToString(finger);
-        drawFingerImage('hand-center', finger)
+
+        try {
+            let finger = searchSpan("unwritten", undefined, 0, "element", "first").innerHTML;
+
+            finger = checkWhatFinger(finger, undefined);
+            finger = fingerToString(finger);
+            drawFingerImage('hand-center', finger);
+        } catch {
+            return;
+        }
+
+
     }
 }
 

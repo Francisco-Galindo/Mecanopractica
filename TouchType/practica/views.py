@@ -27,7 +27,7 @@ def game_page(request):
 
     modes = []
     glosarios = []
-    for mode in Text_Mode.objects.all():
+    for mode in Text_Mode.objects.all().order_by('mode'):
         if "Glosario" in getattr(mode, "mode"):
             glosarios.append(mode)
         else:
@@ -59,7 +59,7 @@ def game_page(request):
 def top_page(request):
     modes = []
     glosarios = []
-    for mode in Text_Mode.objects.all():
+    for mode in Text_Mode.objects.all().order_by('mode'):
         if "Glosario" in getattr(mode, "mode"):
             glosarios.append(mode)
         else:
@@ -73,7 +73,7 @@ def user_page(request):
     if request.user.is_authenticated:
         modes = []
         glosarios = []
-        for mode in Text_Mode.objects.all():
+        for mode in Text_Mode.objects.all().order_by('mode'):
             if "Glosario" in getattr(mode, "mode"):
                 glosarios.append(mode)
             else:
@@ -218,8 +218,13 @@ def sessions(request, mode):
 #Entregando las palabras pedidas
 def words(request, mode):
 
-    if request.method == "GET":
-        # Obteniendo el banco de palabras correcto dependiendo del modo de jueg
+    if request.method == "GET" and request.user.is_authenticated:
+        # Obteniendo el banco de palabras correcto dependiendo del modo de juego
+        user = User.objects.get(username=request.user)
+        fingers = finger_list_to_ints(getattr(user, "fingers"))
+        fingers_added = fingers_proportions(fingers)
+        worst_finger = fingers_added.index(min(fingers_added))
+
 
         if '10' in mode or 'Fácil' in mode:
             if '10' in mode:
@@ -227,13 +232,6 @@ def words(request, mode):
                 words = Words_es.objects.order_by("-weight")[:int(mode_split[0])]
             else:
                 words = Substring.objects.order_by("-weight")[:1000]
-
-
-            user = User.objects.get(username=request.user)
-
-            fingers = finger_list_to_ints(getattr(user, "fingers"))
-            fingers_added = fingers_proportions(fingers)
-            worst_finger = fingers_added.index(min(fingers_added))
 
             finger_letters =    [['q', 'a', 'á', 'z', '1', '!'], 
                                 ['w', 's', 'x', '2', '\"'], 
@@ -267,10 +265,9 @@ def words(request, mode):
             
         elif 'Glosario' in mode or 'Texto' in mode:
             concept_mode = Text_Mode.objects.get(mode=mode)
-            try:
-                text = random.choice(Concept.objects.filter(mode=concept_mode))
-            except:
-                text = random.choice(Text.objects.filter(mode=concept_mode))
+
+            text = random.choice(Text.objects.filter(mode=concept_mode))
+            print(getattr(text, 'pk'))
             string = getattr(text, 'text')
             words = string.split(' ')
             words_to_send = []
