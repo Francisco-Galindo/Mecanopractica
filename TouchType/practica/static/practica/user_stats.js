@@ -1,5 +1,6 @@
 // Corre la función con la cual crear el gráfico con todas las estadísticas del usuario.
 document.addEventListener('DOMContentLoaded', function() {
+
     getUserStats();
 });
 
@@ -83,12 +84,13 @@ function tablaWpm(lista_de_wpm, lista_de_acc, lista_fechas) {
     });
 }
 
-function getUserStats() {
+function getUserStats(mode) {
     let wpms = []
     let accs = []
     let dates = []
     let iterations = 10
     mode = localStorage.getItem('mode');
+
     fetch('/usuario/data/' + mode)
     .then(response => response.json())
     .then(data => {
@@ -120,7 +122,7 @@ function getUserStats() {
         if (sessions[0] === undefined) {
             var ctx = document.getElementById("graph")
             ctx.innerHTML = `   <div class="alert alert-warning" role="alert">
-                                    No tienes ninugna partida en este modo...
+                                    No tienes ninguna partida en este modo...
                                 </div>  `
         } else {
             /*

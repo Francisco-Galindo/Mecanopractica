@@ -1,14 +1,28 @@
+document.addEventListener('DOMContentLoaded', function() {   
+    // Selecciona el modo fácil en caso de que no haya ninguno guardado anteriormente.
+    if (!localStorage.getItem('mode')) {
+        localStorage.setItem('mode', 'Fácil')
+    }
 
-// Selecciona el modo fácil en caso de que no haya ninguno guardado anteriormente.
-if (!localStorage.getItem('mode')) {
-    localStorage.setItem('mode', 'Fácil')
-}
+    // Inicializando el modo de estudio
+    if (!localStorage.getItem('study-mode')) {
+        localStorage.setItem('study-mode', 'false')
+    }  
+});
+
+
 
 
 function changeMode(mode) {
     localStorage.setItem('mode', mode);
-    console.log(localStorage.getItem('mode'), mode);
+    refreshPage();
+}
 
+
+
+function changeStudyMode(study_mode) {
+
+    localStorage.setItem('study-mode', study_mode);
     refreshPage();
 }
 

@@ -8,9 +8,9 @@
 {% block left_block %}
 <div class="main" id="left">
     {% if user.is_authenticated %}
-        <div>Bienvenido, <strong>{{request.user}}</strong></div>
+        <div>Bienvenido, <strong id="username">{{request.user}}</strong></div>
         </br>
-        <button class="btn btn-primary" type="submit">Button</button>
+        <div id="boton-estudio"></div>
         </br></br>
         <div id="worst_finger_indicator_text">Dedo más débil: </div>
         <div id="hand-left" style="font-size: 1.5vw; width: 10vh;">{{finger}}</div>
@@ -68,6 +68,17 @@
 
 
                 </div>
+            </div>
+
+            <div id="question">
+                <div>¿A qué concepto corresponde la definición anterior?</div>
+                <div id="options" style="display: flex;"></div>
+
+                <form id="question-form" style="text-align: center; font-size: 2vw;">
+                    <span id="word-counter">Escribe tu respuesta</span>
+                    <input value="" class="form-control form-control-lg input" type="text" id="question-input" autofocus onkeydown="questionEvent(event)">
+    
+                </form>
             </div>
 
         {% else %}

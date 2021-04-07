@@ -26,12 +26,9 @@ def convert_session_to_dict(session, mode):
     current_session["acc"] = getattr(session, 'acc')
     current_session["time"] = getattr(session, 'time')
 
-    session_time = getattr(session, 'times')
+    session_time = getattr(session, 'timestamp')
 
     now_time = datetime.now().timestamp()
-    # 86400 segundos = 1 día
-    if now_time - session_time.timestamp() >= 86400:
-        print("ha pasado mas de un dia desde que esta partida fue jugada") 
 
 
     time_of_session = session_time.strftime("%d/%b/%Y, %H:%M:%S")

@@ -25,7 +25,7 @@ SECRET_KEY = 'tegurn6($vce@0!7pdxmbof0g$8-k-hzh8$h$e5d-07o9_43+='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['14cf6e90-6535-45c0-bdde-e6ba365f55dc.id.repl.co']
 
 
 # Application definition

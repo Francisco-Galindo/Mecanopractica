@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.deletion import DO_NOTHING
 
 
 ############### Recuerda purgar la base de datos, de todas maneras la vamos a mover a Postgres
@@ -17,10 +18,9 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username}"
 
-class Substring(models.Model):
+class Substring_es(models.Model):
     substring = models.CharField(max_length=33)
     weight = models.FloatField()
-    numero = models.IntegerField(default=1)
 
     def __str__(self):
         return f"{self.substring}, hola"
@@ -73,14 +73,19 @@ class Text(models.Model):
             "year": self.year,
             "text": self.text
         }
+    def __str__(self):
+        return f"{self.title}, {self.pk}"
 
 class Session(models.Model):
     user = models.ForeignKey("User", on_delete=models.DO_NOTHING, related_name="players_that_played")
     mode = models.ForeignKey("Text_Mode", on_delete=models.DO_NOTHING, related_name="session_on_mode")
+    text = models.ForeignKey("Text", on_delete=models.DO_NOTHING, related_name="sessions_in_text", blank=True, null=True)
+    answered_correctly = models.BooleanField(null=True, blank=True)
+    leitner_box = models.IntegerField(null=True, blank=True)
     wpm = models.FloatField()
     acc = models.FloatField()
     time = models.FloatField()
-    times = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):
         return {
@@ -91,6 +96,9 @@ class Session(models.Model):
             "time": self.time,
             "timestamp": self.times.strftime("%b %#d %Y, %#I:%M %p")
         }
+
+    def __str__(self):
+        return f"Fecha: {self.timestamp} ||| Modo:{self.mode}"
 
 
 class Tip(models.Model):

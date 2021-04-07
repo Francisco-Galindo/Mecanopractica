@@ -23,43 +23,42 @@
         <div class="row" style="text-align: center;">
         </div>
         </br>
-        <div class="row">
-            <div class="col-6 col-md-6" style="display: flex;">
-                {% if user.is_authenticated %}
-                    <a style="margin: auto;" class="btn btn-primary" href="{% url 'game_page' %}" role="button">Ir a jugar</a> 
-                {% else %}  
-                    <div class="dropdown" style="margin: auto;">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Para jugar, debes iniciar sesión
-                        </button>
-                        <div class="dropdown-menu" style="background-color: var(--highlight); color: var(--text);">
-                            <form class="px-4 py-3" action="{% url 'login'%}" method="post">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="usuario">Nombre de usuario</label>
-                                    <input name="username" required="required" class="form-control form-control-sm" type="text" id="username">
-                                </div>
-                                <div class="form-group">
-                                    <label for="password1">Contraseña</label>
-                                    <input name="password" required="required" type="password" class="form-control form-control-sm" id="password1">
-                                </div>
-                                </br>
-                                <button type="submit" class="btn btn-primary">Ingresar</button>
-                            </form>
-                            <div class="dropdown-divider" ></div>
-                            <a class="dropdown-item" href="{% url 'register' %}" style="color: var(--text);">¿Eres nuevo? Crea un usuario</a>
-                        </div> 
-                    </div>
+        <div class="w-100" style="display: flex;">
 
-                    <div style="align-self: center;">
-                        <a type="button" class="btn btn-secondary" href="{% url 'register' %}">Registrarse</a>
-                    </div>
-            
-                {% endif %}
+            <div style="margin: auto;">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: smaller;">
+                    Para jugar, debes iniciar sesión
+                </button>
+                <div class="dropdown-menu" style="background-color: var(--highlight); color: var(--text); border-width: 5px;">
+                    <form class="px-4 py-3" action="{% url 'login'%}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="usuario">Nombre de usuario</label>
+                            <input name="username" required="required" class="form-control form-control-sm" type="text" id="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password1">Contraseña</label>
+                            <input name="password" required="required" type="password" class="form-control form-control-sm" id="password1">
+                        </div>
+                        </br>
+                        <button type="submit" class="btn btn-primary">Ingresar</button>
+                    </form>
+                    <div class="dropdown-divider" ></div>
+                    <a class="dropdown-item" href="{% url 'register' %}" style="color: var(--text);">¿Eres nuevo? Crea un usuario</a>
+                </div> 
             </div>
-            <div class="col-6 col-md-6" style="display: flex;">
+            
+            <div class="dropdown" style="margin: auto;">
+                <a type="button" class="btn btn-secondary" href="{% url 'register' %}">Registrarse</a>
+            </div>
+    
+
+            <div style="margin: auto;">
                 <a style="margin: auto;" class="btn btn-secondary" href="{% url 'top_games' %}" role="button">Ver tablero</a> 
             </div>
+        </div>
+        <div class="row">
+            
         </div>
         </br></br></br></br>
         <div class="row" style="text-align: center;">

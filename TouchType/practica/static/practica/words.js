@@ -27,9 +27,34 @@ var spans = []
 var loop;
 var velocidad = 1;
 var palabras_totales;
+var study_mode;
+var text_id = 'undefined';
+var source;
+var highscore = [];
+var username;
+
+var answer_options = [];
+var correct_answer = null;
+var leitner = null;
+var answered_correctly = null;
+var has_answered = false;
+
 
 document.addEventListener('DOMContentLoaded', function() {
     mode = localStorage.getItem('mode');
+    study_mode = localStorage.getItem('study-mode');
+
+    if (mode.includes('Glosario')) {
+        let button_message = 'Activar modo de repaso'
+        if (study_mode == 'true') {
+            button_message = 'Desactivar modo de repaso'
+            document.getElementById('boton-estudio').innerHTML = `<button class="btn btn-dark" onclick="changeStudyMode(\'false\')">${button_message}</button>`
+        } else {
+            document.getElementById('boton-estudio').innerHTML = `<button class="btn btn-secondary" onclick="changeStudyMode(\'true\')">${button_message}</button>`
+        }
+        
+    }
+
 
     drawFingerImage('hand-left', undefined);
     let mode_str = document.getElementById('mode-indicator');
@@ -37,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mode === 'Fácil') {
         document.getElementById('worst_finger_indicator_text').innerHTML = 'Dedo a practicar: ';
     }
+    username = document.getElementById('username').innerHTML;
 
     spans = []
     total_presses = 0;
@@ -62,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loop = setInterval(actualizarJuego, 1000/velocidad)
 
+    document.getElementById('question').style.display = 'none';
     document.getElementById('results').style.display = 'none';
     document.getElementById('text-block').style.display = 'block';
     document.getElementById('form').style.display = 'block';
@@ -69,46 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 });
-
-
-function reiniciar() {
-
-    let mode_str = document.getElementById('mode-indicator');
-    mode_str.innerHTML = `${mode}`;
-    if (mode === 'Fácil') {
-        document.getElementById('worst_finger_indicator_text').innerHTML = 'Dedo a practicar: ';
-    }
-
-    spans = []
-    total_presses = 0;
-    correct_presses = 0;
-    incorrect_presses = 0;
-    correct_spaces = 0;
-    playing = false;
-    playing_timer = 0;
-    timer = 0;
-    terminado = 0;
-    space_pressed = 0;
-    fingers = [];
-    fingers.length = 16;
-    for (let i=0; i<16; ++i) fingers[i] = 0;
-    wpm_list = [];
-    acc_list = [];
-    palabras_totales = 0;
-
-    fetchWords(mode);
-
-
-
-
-    loop = setInterval(actualizarJuego, 1000/velocidad)
-
-    document.getElementById('results').style.display = 'none';
-    document.getElementById('text-block').style.display = 'block';
-    document.getElementById('form').style.display = 'block';
-    document.getElementById("form").reset();
-}
-
 
 
 function actualizarJuego() {
@@ -124,8 +111,13 @@ function actualizarJuego() {
         showVel();
     } else if (playing === false && timer > 0) {
         stopGame(loop); 
-        console.log(timer)
-        postResults();
+        if (isStudying()) {
+            console.log('no es posible')
+            question()
+            
+        } else {
+            postResults();
+        }
 
     }
 }
@@ -137,9 +129,13 @@ function stopGame(loop) {
 
 
 // Haciendo fetch de las palabras que aparecerán en el juego
-function fetchWords(words) {
+function fetchWords(mode) {
+    if (mode.includes("Glosario")) {
+        mode = mode.concat(`,${study_mode}`)
 
-    fetch('/practica/' + words)
+    }
+    console.log(mode)
+    fetch('/practica/' + mode)
     .then(response => response.json())
     .then(words => {
         console.log(words);
@@ -147,10 +143,25 @@ function fetchWords(words) {
         div.innerHTML = "";
         let contador = 0
         words.forEach(function(word) {
+
             let cortar = true
-            /*if (contador === 0) {
-                document.getElementById("left").innerHTML += `Autor: ${JSON.parse(word).author}`;
-            } else if (contador > 0) {*/
+            if (contador === 0 && (mode.includes("Glosario") || mode.includes("Texto"))) {
+                source =  JSON.parse(word).author;
+                text_id = JSON.parse(word).id;
+                console.log(text_id)
+                if (study_mode === 'true') {
+                    answer_options = JSON.parse(word).options
+                    correct_answer = JSON.parse(word).answer
+                    leitner = JSON.parse(word).leitner
+
+                    if (JSON.parse(word).error) {
+                        alert(JSON.parse(word).error)
+                        changeStudyMode('false')
+                    }
+
+                }
+
+            } else {
                 let letters = JSON.stringify(word.word);
 
                 if (letters === undefined) {
@@ -161,10 +172,10 @@ function fetchWords(words) {
                 let i = 1
                 if (cortar === false) {
                     i = 0;
-                    n += 1;
+                    n ++;
                 }
     
-                for(let j = i; j < n-1; j++) {
+                for (let j = i; j < n-1; j++) {
                     const letter = document.createElement("span");
                     letter.innerHTML = `${letters.charAt(j)}`
                     letter.classList.add("unwritten");
@@ -178,7 +189,7 @@ function fetchWords(words) {
                 div.append(space);
             
 
-            
+            }
             contador ++;
         });
     })
@@ -188,7 +199,7 @@ function fetchWords(words) {
         spans[0].style.borderLeft = "0.3vw dotted #d5ced9"
 
         // Poniendo el título del Glosario en negritas
-        if (mode.includes('Glosario') === true) {
+        if (mode.includes('Glosario') === true && mode.includes('false') === true) {
             let i = 0;
             while (spans[i].innerHTML !== '.' && spans[i].innerHTML !== ':') {
                 spans[i].style.fontWeight ='bold';
@@ -287,6 +298,7 @@ function checkCorrectWord(mark) {
             correct_spaces ++;
             correct_presses ++;
         }
+        document.getElementById("form").reset();
     }
     return is_correct;
 }
@@ -406,19 +418,22 @@ function keyPressed(event) {
             deleteKey();
 
         } else if (key === " ") {
-            space_pressed ++;
+            if (!(study_mode === 'true' && spans[0].innerHTML === 'N' && spans[29].innerHTML === '1')) {
+                space_pressed ++;
 
-            if(!checkCorrectWord(true) && searchSpan("unwritten", undefined, 1, "element", "first") === null) {
-                console.log("safdaasdfasdf", timer)
-                playing = false;
-                terminado = 1;
+                if(!checkCorrectWord(true) && searchSpan("unwritten", undefined, 1, "element", "first") === null) {
+
+                    playing = false;
+                    terminado = 1;
+                }
+                if (space_pressed > 1) {
+                    deleteFirstWrittenWord();
+                }
+                total_presses ++;
+                
+                document.getElementById("word-counter").innerHTML = `${space_pressed} / ${palabras_totales} palabras escritas`
             }
-            if (space_pressed > 1) {
-                deleteFirstWrittenWord();
-            }
-            total_presses ++;
-            document.getElementById("form").reset();
-            document.getElementById("word-counter").innerHTML = `${space_pressed} / ${palabras_totales} palabras escritas`
+            
 
         } else {
             checkKeyPresses(key);
@@ -462,18 +477,25 @@ function results(valid) {
     playing = false;
 
     let mode_str = document.getElementById('mode-indicator');
-    mode_str.innerHTML = `Modo ${mode}`;
+    mode_str.innerHTML = `<span style="font-size: 2vw">Modo ${mode}</span>`;
 
     const div = document.querySelector('#grafica-resultados');
     div.innerHTML = `<span style="font-size: 2vw;">Resultados</span>\n`;
     if (valid === false) {
         div.innerHTML += `<span style="font-size: 1vw; color: red;">Esta partida no es válida,\n porque tu presisión fue menor al 75% o pasaste demasiado tiempo sin escribir</span>\n`;
     }
+    if (wpm == highscore[0] && highscore[1] == acc) {
+        div.innerHTML += `<span style="font-size: 2vw; color: var(--success);">¡Nuevo record!</span>\n`
+    }
     div.innerHTML += `<span style="font-size: 1.5vw;"> wpm: ${wpm}  </span>`;
     div.innerHTML += `<span style="font-size: 1.5vw;">acc: ${acc}%</span>\n`;
     div.innerHTML += `<div id="chart"><canvas id="histo"></canvas></div>`;
+    if (mode.includes("Glosario") || mode.includes("Texto")) {
+        div.innerHTML += `<span style="font-size: 0.75vw;">Fuente del texto: ${source}</span>`;
 
+    }
 
+    document.getElementById('question').style.display = 'none';
     document.querySelector('#text-block').style.display = 'none';
     document.querySelector('#form').style.display = 'none';
     document.querySelector('#results').style.display = 'block';
@@ -508,8 +530,15 @@ function getSessions(func, value) {
         var table = document.createElement("TABLE");
         table.innerHTML = `<tr><td>Usuario</td><td>WPM</td><td>ACC</td></tr>`;
         
+
+        let i = 0;
         sessions.forEach(function(top) {
+            if (i === 0 && username === JSON.parse(top).user) {
+                highscore[0] = JSON.parse(top).wpm;
+                highscore[1] = JSON.parse(top).acc;
+            }
             table.innerHTML += `<tr><td>${JSON.parse(top).user}</td><td>${JSON.parse(top).wpm}</td><td>${JSON.parse(top).acc}%</td></tr>`;
+            i++;
         })
         div.append(table);
 
@@ -519,37 +548,95 @@ function getSessions(func, value) {
 
 function postResults() {
 
+    
+    if (!(acc >= 75 && wpm <= 300 && terminado === 1 && !isStudying())) {
+        if (isStudying()) {
+            submittingResults()
+        } else {
+            getSessions(results, false)
+        }
+        
+        
+    } else {
+        submittingResults()    
+    }
+    
+}
+
+function submittingResults() {
     const csrftoken = getCookie('csrftoken');
     const request = new Request(
         `/sessions/${mode}/`,
         {headers: {'X-CSRFToken': csrftoken}}
     );
-    if (acc >= 75 && wpm <= 300 && terminado === 1) {
-        var sent_fingers = '';
-        fingers.forEach(function(finger) {
-            sent_fingers += `${finger},`
-        })
 
-        console.log(sent_fingers);
-        fetch(request, {
-            method: 'POST',
-            mode: 'same-origin',
-            body: JSON.stringify({
-                mode: mode,
-                wpm: wpm,
-                acc: acc,
-                time: timer,
-                fingers: sent_fingers
-            })
+    var sent_fingers = '';
+    fingers.forEach(function(finger) {
+        sent_fingers += `${finger},`
+    })
+
+    console.log(sent_fingers);
+    fetch(request, {
+        method: 'POST',
+        mode: 'same-origin',
+        body: JSON.stringify({
+            mode: mode,
+            wpm: wpm,
+            acc: acc,
+            time: timer,
+            fingers: sent_fingers,
+            text_id: text_id,
+            answered_correctly: answered_correctly,
+            leitner: leitner
         })
-        .then(function(response) {
-            console.log(response)
-            getSessions(results, true)})
-        .catch(error => {
-            console.log(error);
-        });
-    } else {
-        getSessions(results, false)
-    }
+    })
+    .then(function(response) {
+        console.log(response)
+        getSessions(results, true)})
+    .catch(error => {
+        console.log(error);
+    });
+}
+
+function question() {
+    console.log('wtf')
+    document.getElementById('question').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('text-block').style.display = 'none';
+    document.getElementById('form').style.display = 'none';
+
+}
+
+function isStudying() {
+    return mode.includes('Glosario') && study_mode === 'true';
+}
+
+function questionEvent(event) {
+    event.preventDefault();
+    if (!(event.ctrlKey || event.key === "Shift" || event.altKey || event.isComposing || event.key === "Dead" || event.key === "OS")) {
+        console.log(event.keyCode)
+        if (event.keyCode === 13) {
+            let form_value = document.getElementById('question-input').value;
+            console.log(`Frm: ${form_value}`)
+            checkAnswer(form_value);
+        } else if (event.keyCode === 8) {   
+            
+            document.getElementById('question-input').value = document.getElementById('question-input').value.slice(0, -1)
     
+        } else {
+            document.getElementById('question-input').value += event.key
+        }
+    }
+}
+
+function checkAnswer(answer) {
+    if (answer === correct_answer) {
+        answered_correctly = true;
+    } else {
+        answered_correctly = false;
+    }
+    has_answered = true;
+    console.log(correct_answer)
+    console.log(answered_correctly, leitner)
+    postResults();
 }
