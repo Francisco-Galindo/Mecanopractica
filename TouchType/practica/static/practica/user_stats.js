@@ -119,10 +119,12 @@ function getUserStats(mode) {
 
         var sessions = JSON.parse(data).sessions
         
+        let mode = localStorage.getItem('mode')
+
         if (sessions[0] === undefined) {
             var ctx = document.getElementById("graph")
             ctx.innerHTML = `   <div class="alert alert-warning" role="alert">
-                                    No tienes ninguna partida en este modo...
+                                    No tienes ninguna partida en el modo ${mode}.
                                 </div>  `
         } else {
             /*
@@ -149,7 +151,7 @@ function getUserStats(mode) {
 // Crea una tabla con num_sessions filas de las mejores partidas del usuatrio
 function createTop(sessions, num_sessions) {
     var tabla = document.getElementById("tablero");
-    tabla.innerHTML = `Mejores ${num_sessions} partidas en el modo ${localStorage.getItem('mode')}`
+    tabla.innerHTML = `Mejores ${num_sessions} partidas personales en el modo ${localStorage.getItem('mode')}`
     tabla.innerHTML += `</br>`
     let tablerito =  document.createElement("TABLE");
     tablerito.innerHTML += `<tr> <td>Velocidad</td> <td>Precisión</td> <td>Fecha</td> </tr>`

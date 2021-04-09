@@ -22,7 +22,7 @@
         <div class="row">
             <div class="w-100" style="display: flex;">
                 <div style="margin: auto;">
-                    <a type="button" class="btn btn-secondary" href="{% url 'game_page' %}">Jugar</a>
+                    <a type="button" class="btn btn-primary" href="{% url 'game_page' %}">Empezar a jugar</a>
                 </div>
                 <div style="margin: auto;">
                     <a type="button" class="btn btn-secondary" href="{% url 'user_page' %}">Ver estadísticas de usuario</a>
@@ -45,13 +45,13 @@
         
         <div class="row">
             <div>
-                <div style="text-align: center;"><h3>Mamu</h3></div>
+                <div style="text-align: center;"><h3>Tus estadísticas</h3></div>
                 </br>
-                <div><p style="text-align: center;">asdf</p></div>
+                
             </div>
         </div> 
 
-        </br></br></br>
+        </br>
         <div class="row">
             <div id="modo" style="text-align: center;"></div>
         </div>
@@ -62,23 +62,37 @@
                 <div class="btn-group" id="dropdown-modos" style="margin: auto;">
 
                     <button type="button" class="btn btn-secondary" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false">
-                        Elegir modo de juego
+                        Cambiar modo
                     </button>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left" style="background-color: var(--highlight); border: 2px solid var(--text); color: var(--text);">
-                        <div>Glosarios</div>
-                        {% for glosario in glosarios%}
-                            <button  style="color: var(--text);" name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
-                        {% endfor %} 
-                        <div>Otros modos</div>
-                        {% for mode in modes %}
-                            <button style="color: var(--text);" name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="dropdown-item">{{mode}}</button>
-                        {% endfor %}
-                    </div>
+
+                                    <div style="margin-left: 15px; margin-right: 15px;">
+                                        <div>Modos de juego</div>
+                                        {% for mode in modes %}
+                                            <button style="color: var(--text);" name="mode" value="{{mode}}" onclick="changeMode(this.value)" class="dropdown-item dropdown-option">{{mode}}</button>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div style="margin-left: 30px; margin-right: 15px;">
+                                        <div>Glosarios</div>
+                                        {% for glosario in glosarios%}
+                                            <button  style="color: var(--text);" name="mode" value="{{glosario}}" onclick="changeMode(this.value)" class="dropdown-item">{{glosario}}</button>
+                                        {% endfor %} 
+                                    </div>
+                                    
+                                </div>
                 </div>
             </div>
         </div>
         </br></br></br>
 
+        <div class="row">
+
+
+            </br>
+            <div style="display: flex;"><div id="tablero" style="margin: auto;"></div></div>
+        </div>
+        </br></br></br>
         <div class="row">
             
             <div id="graph" style="height: 40vh; width: 75%; position: relative;margin: auto;">

@@ -10,7 +10,7 @@
 {% block main_block %}
     <div class="main" id="center" style="width: 95vw;">
         <div style="text-align: center;">Registra a un nuevo usuario</div>
-        <form action="{% url 'register'%}" method="post">-
+        <form action="{% url 'register'%}" method="post">
             {% csrf_token %}
 
             <div class="form-group">

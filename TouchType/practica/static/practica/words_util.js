@@ -75,23 +75,23 @@ function drawFingerImage(selector, finger) {
 function fingerToString(finger) {
 
     if (finger === 0) {
-        finger = "Menique izquierdo"
+        finger = "menique izquierdo"
     } else if (finger === 1) {
-        finger = "Anular izquierdo"
+        finger = "anular izquierdo"
     } else if (finger === 2) {
-        finger = "Medio izquierdo"
+        finger = "medio izquierdo"
     } else if (finger === 3) {
         finger = "indice izquierdo"
     } else if (finger === 4) {
         finger = "indice derecho"
     } else if (finger === 5) {
-        finger = "Medio derecho"
+        finger = "medio derecho"
     } else if (finger === 6) {
-        finger = "Anular derecho"
+        finger = "anular derecho"
     } else if (finger ===7) {
-        finger = "Menique derecho"
+        finger = "menique derecho"
     } else if (finger === 8) {
-        finger = "Pulgar derecho"
+        finger = "pulgar derecho"
     }
 
     return finger;

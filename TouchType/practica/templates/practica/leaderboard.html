@@ -56,4 +56,18 @@
 
 {% block script2 %}
     <script src="{% static 'practica/words_util.js' %}"></script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {   
+            // Selecciona el modo fácil en caso de que no haya ninguno guardado anteriormente.
+            if (!localStorage.getItem('mode')) {
+                localStorage.setItem('mode', 'Fácil')
+            }
+
+            // Inicializando el modo de estudio
+            if (!localStorage.getItem('study-mode')) {
+                localStorage.setItem('study-mode', 'false')
+            }  
+        });
+    </script>
 {% endblock %}

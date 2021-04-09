@@ -400,7 +400,7 @@ function checkKeyPresses(key) {
 // Se ocupa de tomar la decision de llamar la función correspondiente dependiendo de si fue presionado el Backspace u otra tecla
 function keyPressed(event) {
     const key = event.key;
-    if (!(event.ctrlKey || key === "Shift" || event.altKey || event.isComposing || key === "Dead" || key === "OS")) {
+    if ((event.keyCode >= 48 && event.keyCode <= 90) || (event.keyCode >= 96 && event.keyCode <= 111) || (event.keyCode >= 186) || key == "Backspace" || key === " ") {
         playing = true;
         playing_timer = 15;
 
@@ -482,7 +482,7 @@ function results(valid) {
     const div = document.querySelector('#grafica-resultados');
     div.innerHTML = `<span style="font-size: 2vw;">Resultados</span>\n`;
     if (valid === false) {
-        div.innerHTML += `<span style="font-size: 1vw; color: red;">Esta partida no es válida,\n porque tu presisión fue menor al 75% o pasaste demasiado tiempo sin escribir</span>\n`;
+        div.innerHTML += `<span style="font-size: 1vw; color: red;">Esta partida no es válida\n porque tu precisión fue menor al 75% o pasaste demasiado tiempo sin escribir.</span>\n`;
     }
     if (wpm == highscore[0] && highscore[1] == acc) {
         div.innerHTML += `<span style="font-size: 2vw; color: var(--success);">¡Nuevo record!</span>\n`

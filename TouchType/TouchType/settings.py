@@ -25,7 +25,7 @@ SECRET_KEY = 'tegurn6($vce@0!7pdxmbof0g$8-k-hzh8$h$e5d-07o9_43+='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['14cf6e90-6535-45c0-bdde-e6ba365f55dc.id.repl.co']
+ALLOWED_HOSTS = ['33b1fdf6-686f-4834-afd0-ff9ceebf9612.id.repl.co', 'mecanografia.franciscogalin2.repl.co', 'mecanopractica.franciscogalin2.repl.co']
 
 
 # Application definition
