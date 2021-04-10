@@ -400,7 +400,8 @@ function checkKeyPresses(key) {
 // Se ocupa de tomar la decision de llamar la función correspondiente dependiendo de si fue presionado el Backspace u otra tecla
 function keyPressed(event) {
     const key = event.key;
-    if ((event.keyCode >= 48 && event.keyCode <= 90) || (event.keyCode >= 96 && event.keyCode <= 111) || (event.keyCode >= 186) || key == "Backspace" || key === " ") {
+    console.log(key)
+    if (((event.keyCode >= 48 && event.keyCode <= 90) || (event.keyCode >= 96 && event.keyCode <= 111) || (event.keyCode >= 186) || key == "Backspace" || key === " ") && key !== 'Dead' ) {
         playing = true;
         playing_timer = 15;
 
